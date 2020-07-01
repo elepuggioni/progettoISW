@@ -1,4 +1,4 @@
 from django.http import HttpResponse
 
-def main_page(request):
-    return HttpResponse("Prova pagina")
+def hello(request):
+    return HttpResponse("Hello world")

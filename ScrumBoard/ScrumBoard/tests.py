@@ -1,4 +1,5 @@
 import unittest
+import datetime
 from django.test import TestCase, Client
 from ScrumBoard.models import *
 
@@ -16,12 +17,25 @@ class ViewTest(TestCase):
 class ModelTest(TestCase):
 
     def setUp(self):
+
+        # inizializzazione degli utenti
+        self.utente = User(username="Elena", password="admin")
+        self.utente.save()
+
+        self.utente2 = User(username="Cristina", password="admin")
+        self.utente2.save()
+
+        self.utente3 = User(username="Francesco", password="admin")
+        self.utente3.save()
+
         # inizializzazione delle board
-        self.board1 = Board(nome='Board1')
+        self.board1 = Board(nome='Board1', proprietario=self.utente)
         self.board1.save()
-        self.board2 = Board(nome='Board2')
+
+        self.board2 = Board(nome='Board2', proprietario=self.utente2)
         self.board2.save()
-        self.board3 = Board(nome='Board3')
+
+        self.board3 = Board(nome='Board3', proprietario=self.utente3)
         self.board3.save()
 
         # inizializzazione delle colonne
@@ -34,9 +48,25 @@ class ModelTest(TestCase):
         self.colonna4 = Colonna(nome='Colonna4', board=self.board3)
         self.colonna4.save()
 
+        self.card = Card(nome="Prova",
+                    descrizione="Carta di prova",
+                    story_points="5",
+                    data_scadenza=datetime.date(2020, 7, 1),
+                    colonna=self.colonna1)
+        self.card.save()
+
+        self.card2 = Card(nome="Prova2",
+                     descrizione="Carta di prova2",
+                     story_points="3",
+                     data_scadenza=datetime.date(2020, 7, 2),
+                     colonna=self.colonna2)
+        self.card2.save()
+
     def testFindModels(self):
         # test sulle board
         self.assertEqual(len(Board.objects.all()), 3)
+        self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
+
 
         # test sulle colonne
         self.assertEqual(len(Colonna.objects.all()), 4)
@@ -44,6 +74,11 @@ class ModelTest(TestCase):
         self.assertIn(self.colonna2, self.board1.colonna_set.all())
         self.assertIn(self.colonna3, self.board1.colonna_set.all())
         self.assertIn(self.colonna4, self.board3.colonna_set.all())
+
+        # test sulle card
+        self.assertEqual(len(Card.objects.all()), 2)
+        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 2)
+        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
 
 
 if __name__ == '__main__':

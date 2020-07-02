@@ -9,6 +9,7 @@ class ViewTest(TestCase):
     def setUp(self):
         self.client = Client()
 
+
     def testHelloWorldView(self):
         response = self.client.get('/hello/')
         self.assertContains(response, "Hello world")

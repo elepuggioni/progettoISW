@@ -19,5 +19,9 @@ from ScrumBoard import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', views.hello)
+    path('hello/', views.hello),
+    path(r'dashboard/', views.dashboard),
+    path(r'board/<board_id>/', views.showboard, name='show-board'),
+
+
 ]

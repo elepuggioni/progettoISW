@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 # :)))))))))))))
+from django.urls import reverse
+
+
 class UserMethods(User):
     def show_boards(self):
         #per ogni board presa dal db
@@ -18,6 +20,9 @@ class Board(models.Model):
     nome = models.CharField(max_length=50)
     proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
     partecipanti = models.ManyToManyField(User, related_name='contributors')
+
+    def get_absolute_url(self):
+        return reverse('show-board', args=[str(self.id)])
 
     def aggiungi_utente(self, utente):
         pass
@@ -45,6 +50,10 @@ class Board(models.Model):
     def aggiungi_card(self):
         #chiama colonna.crea_card()
         pass
+
+    def Board(request, board_id):
+        def get_absolute_url(self):
+            return reverse('show-board', args=[str(self.id)])
 
     def __str__(self):
         return self.nome
@@ -113,3 +122,6 @@ class Card(models.Model):
 
     def cambia_storypoints(self, sp):
         self.story_points = sp
+
+    def __str__(self):
+        return self.nome

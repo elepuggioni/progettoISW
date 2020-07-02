@@ -1,20 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # :)))))))))))))
-class Utente():
+class UserMethods(User):
     def show_boards(self):
         #per ogni board presa dal db
         #board.__str__()
         pass
+
+    class Meta:
+        proxy = True
 
 
 class Board(models.Model):
     """La rappresentazione di una board"""
     nome = models.CharField(max_length=50)
     proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    #utenti_partecipanti = models.ManyToManyField(User)
+    partecipanti = models.ManyToManyField(User, related_name='contributors')
 
     def aggiungi_utente(self, utente):
         pass

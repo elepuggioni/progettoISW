@@ -64,9 +64,10 @@ class ModelTest(TestCase):
 
     def testFindModels(self):
         # test sulle board
+        #numero boards
         self.assertEqual(len(Board.objects.all()), 3)
+        #test sui campi
         self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
-
 
         # test sulle colonne
         self.assertEqual(len(Colonna.objects.all()), 4)
@@ -78,6 +79,24 @@ class ModelTest(TestCase):
         # test sulle card
         self.assertEqual(len(Card.objects.all()), 2)
         self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 2)
+        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
+        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 2)
+        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
+        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
+        self.assertEqual(Card.objects.get(story_points="3").story_points, 3)
+        self.assertEqual(Card.objects.get(story_points="5"), self.card)
+        self.assertEqual(Card.objects.get(story_points="3"), self.card2)
+        self.assertIn(self.card, self.colonna1.card_set.all())
+        self.assertIn(self.card2, self.colonna2.card_set.all())
+        self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 1)).data_scadenza,
+                         datetime.date(2020, 7, 1))
+        self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 2)).data_scadenza,
+                         datetime.date(2020, 7, 2))
+        self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 1)), self.card)
+        self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 2)), self.card2)
+
+        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
+        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
         self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
 
 

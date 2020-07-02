@@ -95,10 +95,6 @@ class ModelTest(TestCase):
         self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 1)), self.card)
         self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 2)), self.card2)
 
-        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
-        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
-        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
-
 
 if __name__ == '__main__':
     unittest.main()

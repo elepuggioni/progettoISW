@@ -117,7 +117,7 @@ class Colonna(models.Model):
     def conta_scadute(self):
         count = 0
         for card in Card.objects.filter(colonna=self):
-            if (card.e_scaduta()):
+            if (card.is_scaduta()):
                 count += 1
         return count
 
@@ -154,10 +154,10 @@ class Card(models.Model):
     def cambia_storypoints(self, sp):
         self.story_points = sp
 
-    def e_scaduta(self):
+    def is_scaduta(self):
         """Restituisce true se la card è scaduta"""
         colonne = list(Colonna.objects.filter(board=self.colonna.board).order_by('pk'))
-        if (self.colonna == colonne[-1]):
+        if self.colonna == colonne[-1]:
             return False
 
         return date.today() > self.data_scadenza

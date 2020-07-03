@@ -22,6 +22,6 @@ urlpatterns = [
     path('hello/', views.hello),
     path(r'dashboard/', views.dashboard),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
-
+    path(r'board/<board_id>/aggiungi_card/<column_id>', views.aggiungi_card, name='add-card')
 
 ]

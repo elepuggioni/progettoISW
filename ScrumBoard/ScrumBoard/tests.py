@@ -126,9 +126,9 @@ class ModelTest(TestCase):
         self.assertEqual(self.board1.num_carte(), 2)
 
     def testEScaduta(self):
-        self.assertTrue(self.card.e_scaduta())
-        self.assertFalse(self.card2.e_scaduta())
-        self.assertFalse(self.card3.e_scaduta())
+        self.assertTrue(self.card.is_scaduta())
+        self.assertFalse(self.card2.is_scaduta())
+        self.assertFalse(self.card3.is_scaduta())
 
         self.assertEqual(self.board1.conta_scadute(), 1)
 

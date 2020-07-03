@@ -1,55 +1,74 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 # :)))))))))))))
 from django.urls import reverse
 
 
-class UserMethods(User):
-    def show_boards(self):
+#class UserMethods(User):
+#    def show_boards(self):
         #per ogni board presa dal db
         #board.__str__()
-        pass
+#        pass
 
-    class Meta:
-        proxy = True
+#    class Meta:
+#        proxy = True
 
 
 class Board(models.Model):
     """La rappresentazione di una board"""
     nome = models.CharField(max_length=50)
-    proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
-    partecipanti = models.ManyToManyField(User, related_name='contributors')
+    #proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
+    #partecipanti = models.ManyToManyField(User, related_name='contributors')
 
     def get_absolute_url(self):
         return reverse('show-board', args=[str(self.id)])
 
-    def aggiungi_utente(self, utente):
-        pass
+    #def aggiungi_utente(self, utente):
+    #    pass
 
-    def elimina_utente(self, utente):
-        pass
+    #def elimina_utente(self, utente):
+    #    pass
 
-    def cambia_nome(self, nome):
-        pass
+    #def cambia_nome(self, nome):
+    #    pass
 
     def num_colonne(self):
-        pass
+        """Restituisce il numero di colonne di questa board"""
+        return Colonna.objects.filter(board=self).count()
 
-    def aggiungi_colonna(self, colonna):
-        pass
+    #def aggiungi_colonna(self, colonna):
+    #    pass
 
-    def elimina_colonna(self, colonna):
-        pass
+    #def elimina_colonna(self, colonna):
+    #    pass
 
-    def conta_storypoints(self):
-        #per ogni colonna
-        #chiama colonna.conta_storypoints()
-        pass
+    def conta_storypoints_usati(self):
+        """Conta il totale dei punti storia utilizzati"""
+        colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
+        return colonne[-1].conta_storypoints()
 
-    def aggiungi_card(self):
+    def num_carte(self):
+        """Conta il numero totatle di cards nella board"""
+        totale = 0
+        for colonna in Colonna.objects.filter(board=self):
+            totale += colonna.num_carte()
+        return totale
+
+    def conta_scadute(self):
+        """Conta le cards scaduta nella board"""
+        count = 0
+        colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
+        for colonna in colonne[:-1]:
+            count += colonna.conta_scadute()
+        return count
+
+
+
+    #def aggiungi_card(self):
         #chiama colonna.crea_card()
-        pass
+    #    pass
 
     def Board(request, board_id):
         def get_absolute_url(self):
@@ -66,13 +85,14 @@ class Colonna(models.Model):
     is_last = models.BooleanField(default=True)
 
     def cambia_nome(self, nome):
+        """Modifica il nome della colonna"""
         self.nome = nome
 
-    def crea_card(self, card):
-        pass
+    #def crea_card(self, card):
+    #    pass
 
-    def rimuovi_card(self, card):
-        pass
+    #def rimuovi_card(self, card):
+    #    pass
 
     """ da implementare forse
     def print_lista_card(self): 
@@ -84,11 +104,22 @@ class Colonna(models.Model):
         #cambia a false
 
     def num_carte(self):
-        #query al db
-        pass
+        """Conta il numero totale di cards nella colonna"""
+        return Card.objects.filter(colonna=self).count()
 
     def conta_storypoints(self):
-        pass
+        """Conta il numero di punti storia totali nella colonna"""
+        totale = 0
+        for card in Card.objects.filter(colonna=self):
+            totale += Card.story_points
+        return totale
+
+    def conta_scadute(self):
+        count = 0
+        for card in Card.objects.filter(colonna=self):
+            if (card.e_scaduta()):
+                count += 1
+        return count
 
     def __str__(self):
         return self.nome
@@ -102,11 +133,11 @@ class Card(models.Model):
     story_points = models.IntegerField()
     colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
 
-    def aggiungi_utente(self, utente): #utente tipo User
-        pass
+    #def aggiungi_utente(self, utente): #utente tipo User
+    #    pass
 
-    def rimuovi_utente(self, utente):
-        pass
+    #def rimuovi_utente(self, utente):
+    #    pass
 
     def cambia_colonna(self, colonna):
         self.colonna = colonna
@@ -122,6 +153,14 @@ class Card(models.Model):
 
     def cambia_storypoints(self, sp):
         self.story_points = sp
+
+    def e_scaduta(self):
+        """Restituisce true se la card è scaduta"""
+        colonne = list(Colonna.objects.filter(board=self.colonna.board).order_by('pk'))
+        if (self.colonna == colonne[-1]):
+            return False
+
+        return date.today() > self.data_scadenza
 
     def __str__(self):
         return self.nome

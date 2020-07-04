@@ -3,11 +3,51 @@
 {% block title %}Board Detail{% endblock %}
 
 {% block content %}
-      <h3 class="mb-3">DETTAGLI BOARD</h3>
-      <hr>
       {% if board %}
-      <p>{{ board.nome }}</p>
-      <p>{{ board.proprietario }}</p>
+      <h3 class="mb-3">{{ board.nome }}</h3>
+            <hr>
+            <div class="container-fluid board-box d-flex flex-row mb-3 rounded">
+                  {% for colonna in board.get_colonne %}
+
+                        <div class="col bg-column board-column mx-1 border rounded border-success d-flex align-items-start">
+                              <div class="row">
+                                    <div class="col d-flex justify-content-center">
+                                    <a href="{{ colonna.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none">{{ colonna.nome }}</a>
+                                    </div>
+
+                                    <div class="w-100"></div>
+
+                              {% for card in colonna.get_cards %}
+                                    <div class="col-">
+                                          <div class="card mx-2 my-1">
+                                            <div class="card-body px-2 py-1">
+                                              <h5 class="card-title">{{ card.nome }}</h5>
+                                              <p class="card-text">{{ card.descrizione }}</p>
+                                                  <div class="container">
+                                                  <div class="row">
+                                                  <div class="col px-1 d-flex justify-content-center">
+                                              <a href="#" class="card-link">Card link</a>
+                                                  </div>
+                                                  <div class="col px-1 d-flex justify-content-center">
+                                              <a href="#" class="card-link ">Another link</a>
+                                                  </div>
+                                                  </div>
+                                                  </div>
+                                            </div>
+                                          </div>
+                                    </div>
+                              <div class="w-100"></div>
+
+                              {% endfor %}
+                        </div>
+                        </div>
+                  {% endfor %}
+            </div>
+
+
+
+
+
       {% else %}
       <p>No Board Found for id: {{ board_id }}</p>
       {% endif %}

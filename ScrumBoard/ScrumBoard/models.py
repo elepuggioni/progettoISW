@@ -1,8 +1,8 @@
+from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import date
+from django.core.exceptions import *
 
-# :)))))))))))))
 from django.urls import reverse
 
 
@@ -25,24 +25,24 @@ class Board(models.Model):
     def get_absolute_url(self):
         return reverse('show-board', args=[str(self.id)])
 
-    #def aggiungi_utente(self, utente):
-    #    pass
+    def aggiungi_utente(self, utente):
+        pass
 
-    #def elimina_utente(self, utente):
-    #    pass
+    def elimina_utente(self, utente):
+        pass
 
-    #def cambia_nome(self, nome):
-    #    pass
+    def cambia_nome(self, nome):
+        pass
 
     def num_colonne(self):
         """Restituisce il numero di colonne di questa board"""
         return Colonna.objects.filter(board=self).count()
 
-    #def aggiungi_colonna(self, colonna):
-    #    pass
+    def aggiungi_colonna(self, colonna):
+        pass
 
-    #def elimina_colonna(self, colonna):
-    #    pass
+    def elimina_colonna(self, colonna):
+        pass
 
     def conta_storypoints_usati(self):
         """Conta il totale dei punti storia utilizzati"""
@@ -64,11 +64,17 @@ class Board(models.Model):
             count += colonna.conta_scadute()
         return count
 
+    def conta_storypoints(self):
+        #per ogni colonna
+        #chiama colonna.conta_storypoints()
+        pass
 
-
-    #def aggiungi_card(self):
+    def aggiungi_card(self):
         #chiama colonna.crea_card()
-    #    pass
+        pass
+
+    def get_colonne(self):
+        return Colonna.objects.all().filter(board=self)
 
     def Board(request, board_id):
         def get_absolute_url(self):
@@ -82,26 +88,39 @@ class Colonna(models.Model):
     """La rappresentazione di una colonna"""
     nome = models.CharField(max_length=50)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+    """
+    Se dovesse servire is_last è qua
     is_last = models.BooleanField(default=True)
+
+    @classmethod
+    def create(cls, nome, board):
+        if Colonna.objects.all().filter(board=board) == 0:
+            return cls(nome=nome, board=board, is_last=True)
+        try:
+            Colonna.objects.get(board=board, is_last=True).is_last = False
+        except (EmptyResultSet, ObjectDoesNotExist):
+            pass
+        except MultipleObjectsReturned:
+            Colonna.objects.all().filter(board=board, is_last=True).update(is_last=False)
+        finally:
+            return cls(nome=nome, board=board, is_last=True)
+    """
 
     def cambia_nome(self, nome):
         """Modifica il nome della colonna"""
         self.nome = nome
 
-    #def crea_card(self, card):
-    #    pass
+    def crea_card(self, card):
+        pass
 
-    #def rimuovi_card(self, card):
-    #    pass
+    def rimuovi_card(self, card):
+        pass
 
     """ da implementare forse
     def print_lista_card(self): 
         pass
     """
-    def aggiorna_ultima_colonna(self):
-        pass
-        #cerca la colonna is_last = true
-        #cambia a false
 
     def num_carte(self):
         """Conta il numero totale di cards nella colonna"""
@@ -121,6 +140,13 @@ class Colonna(models.Model):
                 count += 1
         return count
 
+    def get_cards(self):
+        return Card.objects.all().filter(colonna=self)
+
+    def Colonna(request, colonna_id):
+        def get_absolute_url(self):
+            return reverse('show-colonna', args=[str(self.id)])
+
     def __str__(self):
         return self.nome
 
@@ -133,12 +159,13 @@ class Card(models.Model):
     story_points = models.IntegerField()
     colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
 
-    #def aggiungi_utente(self, utente): #utente tipo User
-    #    pass
+    """
+    def aggiungi_utente(self, utente): #utente tipo User
+        pass
 
-    #def rimuovi_utente(self, utente):
-    #    pass
-
+    def rimuovi_utente(self, utente):
+        pass
+    """
     def cambia_colonna(self, colonna):
         self.colonna = colonna
 

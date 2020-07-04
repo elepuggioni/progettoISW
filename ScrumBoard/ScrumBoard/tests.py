@@ -18,7 +18,6 @@ class ViewTest(TestCase):
 class ModelTest(TestCase):
 
     def setUp(self):
-
         # inizializzazione degli utenti
         """
         self.utente = User(username="Elena", password="admin")
@@ -39,7 +38,6 @@ class ModelTest(TestCase):
 
         self.board3 = Board(nome='Board3', proprietario=self.utente3)
         self.board3.save()
-
         """
 
         self.board1 = Board(nome='Board1')
@@ -61,6 +59,7 @@ class ModelTest(TestCase):
         self.colonna4 = Colonna(nome='Colonna4', board=self.board3)
         self.colonna4.save()
 
+        #inizializzazione delle carte
         self.card = Card(nome="Prova",
                     descrizione="Carta di prova",
                     story_points="5",
@@ -80,12 +79,11 @@ class ModelTest(TestCase):
                           story_points="5",
                           data_scadenza=datetime.date.today(),
                           colonna=self.colonna2)
+        self.card3.save()
 
     def testFindModels(self):
         # test sulle board
-        #numero boards
         self.assertEqual(len(Board.objects.all()), 3)
-        #test sui campi
         #self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
 
         # test sulle colonne
@@ -96,25 +94,17 @@ class ModelTest(TestCase):
         self.assertIn(self.colonna4, self.board3.colonna_set.all())
 
         # test sulle card
-        self.assertEqual(len(Card.objects.all()), 2)
-        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 2)
-        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
-        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 2)
-        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
-        self.assertEqual(Card.objects.get(story_points="5").story_points, 5)
-        self.assertEqual(Card.objects.get(story_points="3").story_points, 3)
-        self.assertEqual(Card.objects.get(story_points="5"), self.card)
-        self.assertEqual(Card.objects.get(story_points="3"), self.card2)
-        self.assertIn(self.card, self.colonna1.card_set.all())
-        self.assertIn(self.card2, self.colonna2.card_set.all())
-        #self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 1)).data_scadenza,
-                         #datetime.date(2020, 7, 1))
-        #self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 2)).data_scadenza,
-                         #datetime.date(2020, 7, 2))
-        #self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 1)), self.card)
-        #self.assertEqual(Card.objects.get(data_scadenza=datetime.date(2020, 7, 2)), self.card2)
+        self.assertEqual(len(Card.objects.all()), 3)
         self.assertEqual(Card.objects.get(nome='Prova'), self.card)
         self.assertEqual(Card.objects.get(nome='Prova2'), self.card2)
+        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 3)
+        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
+        self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova3")), 1)
+        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 3)
+        self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
+        self.assertEqual(len(Card.objects.all().filter(story_points="5")), 2)
+        self.assertIn(self.card, self.colonna1.card_set.all())
+        self.assertIn(self.card2, self.colonna2.card_set.all())
 
     def testNumeroColonne(self):
         self.assertEqual(self.board1.num_colonne(), 3)
@@ -122,8 +112,8 @@ class ModelTest(TestCase):
 
     def testNumeroCarte(self):
         self.assertEqual(self.colonna1.num_carte(), 1)
-        self.assertEqual(self.colonna2.num_carte(), 1)
-        self.assertEqual(self.board1.num_carte(), 2)
+        self.assertEqual(self.colonna2.num_carte(), 2)
+        self.assertEqual(self.board1.num_carte(), 3)
 
     def testEScaduta(self):
         self.assertTrue(self.card.is_scaduta())
@@ -134,6 +124,7 @@ class ModelTest(TestCase):
 
     def testContaStorypoints(self):
         self.assertEqual(self.board1.conta_storypoints_usati(), 0)
+
 
 if __name__ == '__main__':
     unittest.main()

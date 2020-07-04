@@ -24,7 +24,7 @@ h3 {
 
 .bg-column {
     background-color: #CAD2C5;
-    height: 300px;
+    min-height: 300px;
     transition: 0.3s;
 }
 
@@ -35,7 +35,7 @@ h3 {
 
 .bg-add {
     background-color: #EAEDE8;
-    height: 300px;
+    min-height: 300px;
     transition: 0.3s;
 }
 
@@ -50,5 +50,23 @@ a {
 
 a:hover {
     color: #CAD2C5;
-
 }
+
+.board-box{
+    background-color: #EAEDE8;
+}
+
+.board-column{
+    max-width:20%;
+    min-width:15%;
+    max-height:750px;
+}
+
+.card-title{
+    text-align:center;
+}
+
+.card-text{
+    text-align:center;
+}
+

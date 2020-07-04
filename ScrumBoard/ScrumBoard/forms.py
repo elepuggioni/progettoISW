@@ -15,5 +15,12 @@ class CardForm(forms.Form):
     )
     story_points = forms.IntegerField(
         label="Story points",
-        max_value=20    # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
+        max_value=20  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
+    )
+
+
+class ColumnForm(forms.Form):
+    nome_colonna = forms.CharField(
+        label="Nome colonna",
+        max_length=16
     )

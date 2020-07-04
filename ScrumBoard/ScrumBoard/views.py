@@ -38,3 +38,19 @@ def aggiungi_card(request, column_id):
         card_form = CardForm()
     return render(request, "aggiungi_card.html",
                   {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero
+
+
+def aggiungi_colonna(request, board_id):
+    if request.method == "POST":
+        column_form = ColumnForm(request.POST)
+        if column_form.is_valid():
+            new_column = Colonna(
+                nome=column_form.cleaned_data['nome_colonna'],
+                board=Board.objects.get(pk=board_id)
+            )
+            new_column.save()
+            return HttpResponse("Colonna aggiunta")
+    else:
+        column_form = ColumnForm()
+    return render(request, "aggiungi_colonna.html",
+                  {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'jquery',
     'bootstrap4',
-    'ScrumBoard'
+    'ScrumBoard',
+    'Accounts'
 ]
 
 MIDDLEWARE = [

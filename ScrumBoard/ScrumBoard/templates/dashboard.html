@@ -4,14 +4,15 @@
 
 {% block content %}
         <h3 class="mb-3">LE TUE BOARD</h3>
-        <div class="row row-cols-2 h-100">
+        <hr>
+        <div class="row h-100">
             {% for board in board %}
             <div class="col-2 bg-column border rounded border-success mx-2 d-flex justify-content-center align-items-center">
-                <a href="{{ board.get_absolute_url }}" class="text-uppercase">{{ board.nome }}</a>
+                <a href="{{ board.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none">{{ board.nome }}</a>
             </div>
             {% endfor %}
-            <div class="col border border-success rounded d-flex justify-content-center align-items-center">
-                <button type="button" class="btn btn-outline-success">Aggiungi board</button>
+            <div class="col bg-add rounded d-flex justify-content-center align-items-center">
+                <button type="button" class="btn btn-outline-success border-0 stretched-link">Aggiungi board +</button>
             </div>
         </div>
 {% endblock %}

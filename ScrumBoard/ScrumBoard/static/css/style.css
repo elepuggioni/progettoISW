@@ -11,9 +11,10 @@ body {
     background-color: #2F3E46;
 }
 
-.btn-light {
-    background-color: #CAD2C5;
-    border-color: transparent;
+.btn-outline-success:hover {
+    color: #28A445;
+    background-color: transparent;
+    border: none;
 }
 
 h3 {
@@ -23,8 +24,24 @@ h3 {
 
 .bg-column {
     background-color: #CAD2C5;
-    border-width: 2px;
     height: 300px;
+    transition: 0.3s;
+}
+
+.bg-column:hover {
+    background-color: #52796F;
+    border-color: #CAD2C5!important;
+}
+
+.bg-add {
+    background-color: #EAEDE8;
+    height: 300px;
+    transition: 0.3s;
+}
+
+.bg-add:hover {
+    background-color: #E0E4DD;
+    border-color: #197278!important;
 }
 
 a {
@@ -32,5 +49,6 @@ a {
 }
 
 a:hover {
-    color: #bc4749;
+    color: #CAD2C5;
+
 }

@@ -18,8 +18,10 @@ from django.urls import path, include
 from ScrumBoard import views
 from django.http import HttpResponse
 
+
 def home(request):
     return HttpResponse('Home page')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +29,7 @@ urlpatterns = [
     path(r'dashboard/', views.dashboard),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card/<column_id>', views.aggiungi_card, name='add-card'),
-
+    path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
     path('', include('Accounts.urls'))
 
 ]

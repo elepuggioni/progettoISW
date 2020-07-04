@@ -53,20 +53,66 @@ a:hover {
 }
 
 .board-box{
+    padding-top:8px;
+    padding-bottom:8px;
     background-color: #EAEDE8;
+    overflow-x:auto;
 }
 
 .board-column{
     max-width:20%;
     min-width:15%;
     max-height:750px;
+    background-color: #CAD2C5;
+    min-height: 300px;
+    transition: 0.3s;
+}
+
+.board-column:hover {
+    background-color: #52796F;
+    border-color: #CAD2C5!important;
+}
+
+.board-column:hover .col-title {
+    color:#CAD2C5;
+}
+
+
+
+.card{
+}
+
+.card:hover .card-text{
+    display:block;
+    height: auto;
+    opacity:1;
+    padding-top: 6px;
+    padding-bottom:0px;
 }
 
 .card-title{
     text-align:center;
+    font-weight:bold;
+    font-size:16px;
+}
+
+.card-title > hr{
+    margin-top:6px;
+    margin-bottom:4px;
 }
 
 .card-text{
     text-align:center;
+    font-size:14px;
+    height:0px;
+    opacity:0;
+    transition: padding-top .4s ease-in-out, opacity .4s ease-in-out;
+    padding-top: 2px;
+    overflow: hidden;
+}
+
+.card-link{
+    text-align:center;
+    font-size:14px;
 }
 

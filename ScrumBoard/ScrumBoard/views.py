@@ -21,6 +21,21 @@ def showboard(request, board_id):
     return render(request, "showboard.html", {'board': board, 'board_id': board_id})
 
 
+def crea_board(request):
+    if request.method == "POST":
+        board_form = BoardForm(request.POST)
+        if board_form.is_valid():
+            new_board = Board(
+                nome=board_form.cleaned_data['nome_board']
+            )
+            new_board.save()
+            return HttpResponse("Board creata")
+    else:
+        board_form = BoardForm()
+    return render(request, "aggiungi_board.html",
+                  {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
+
+
 def aggiungi_card(request, column_id):
     if request.method == "POST":
         card_form = CardForm(request.POST)

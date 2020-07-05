@@ -54,3 +54,20 @@ def aggiungi_colonna(request, board_id):
         column_form = ColumnForm()
     return render(request, "aggiungi_colonna.html",
                   {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero
+
+
+def aggiungi_utente(request, board_id):
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        if user_form.is_valid():
+            new_user = User.objects.filter(username=user_form.cleaned_data['username'])
+            if not new_user.exists():  # controllo che esista lo username specficato
+                return HttpResponse("Username non registrato")
+            board = Board.objects.get(pk=board_id)
+            # aggiunta utente qui
+            # board.partecipanti.append(new_user) o qualcos altro a seconda di come trattiamo questa parte
+            return HttpResponse("Utente aggiunto alla board")
+    else:
+        user_form = UserForm()
+    return render(request, "aggiungi_utente.html",
+                  {"form": user_form})  # aggiungi_utente è un placeholder in attesa di quello vero

@@ -24,3 +24,10 @@ class ColumnForm(forms.Form):
         label="Nome colonna",
         max_length=16
     )
+
+
+class UserForm(forms.Form):
+    username = forms.CharField(
+        label="Username",
+        max_length=24
+    )

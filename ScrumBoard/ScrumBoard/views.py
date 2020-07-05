@@ -29,6 +29,7 @@ def crea_board(request):
                 nome=board_form.cleaned_data['nome_board']
             )
             new_board.save()
+            # da assegnare ad un utente a seconda di come decidiamo di gestire il tutto
             return HttpResponse("Board creata")
     else:
         board_form = BoardForm()
@@ -80,7 +81,7 @@ def aggiungi_utente(request, board_id):
                 return HttpResponse("Username non registrato")
             board = Board.objects.get(pk=board_id)
             # aggiunta utente qui
-            # board.partecipanti.append(new_user) o qualcos altro a seconda di come trattiamo questa parte
+            # board.partecipanti.append(new_user) o qualcos altro a seconda di come gestiamo questa parte
             return HttpResponse("Utente aggiunto alla board")
     else:
         user_form = UserForm()

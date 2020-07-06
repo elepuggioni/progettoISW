@@ -24,17 +24,15 @@
     <div class="container-fluid bg-header">
         <div class="container">
             <div class="row align-items-center py-4">
-                <div class="col-11">
+                <div class="col-9">
                     <h1 class="text-header">scrumboard</h1>
                 </div>
+                <!--da mettere: if utente loggato-->
+                <div class="col-2">
+                    <p class="text-center my-auto text-white">Benvenuto, {{user.username}}</p>
+                </div>
                 <div class="col">
-                     <table>
-                        <tr>
-                            <th><button type="button" class="btn btn-light">Aggiungi Utente</button></th>
-                            <th></th>
-                            <th><span><a href="{% url 'logout' %}" class="btn btn-light">Logout</a></span></th>
-                        </tr>
-                    </table>
+                     <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
                 </div>
             </div>
         </div>

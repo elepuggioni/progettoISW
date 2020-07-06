@@ -87,3 +87,14 @@ def aggiungi_utente(request, board_id):
         user_form = UserForm()
     return render(request, "aggiungi_utente.html",
                   {"form": user_form})  # aggiungi_utente è un placeholder in attesa di quello vero
+
+
+def burndown(request, board_id):
+    try:
+        board = Board.objects.get(pk=board_id)
+    except Board.DoesNotExist:
+        board = None
+    context = {
+        'board': board
+    }
+    return render(request, "burndown.html", context)

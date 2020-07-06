@@ -6,20 +6,20 @@
       {% if board %}
     <div class="container m-0 p-0">
         <div class="row m-0 p-0">
-            <h3 class="col">{{ board.nome }}</h3>
-            <div class="col-7 d-flex justify-content-end">
-            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Utente</button>
-            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Colonna</button>
-            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Card</button>
-            <button class="col-3 btn btn-outline-info board-button align-self-center">Burndown</button>
+            <h3 class="col-md-4">{{ board.nome }}</h3>
+            <div class="col-md-8 d-flex justify-content-end">
+            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Utente</button>
+            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Colonna</button>
+            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Card</button>
+            <button class="col btn btn-outline-info board-button align-self-center">Burndown</button>
             </div>
         </div>
     </div>
             <hr>
-            <div class="container-fluid board-box d-flex flex-row mb-3 rounded">
+            <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1">
                   {% for colonna in board.get_colonne %}
 
-                        <div class="col board-column border rounded border-success mx-1 d-flex align-items-start d-flex justify-content-center">
+                        <div class="col board-column scrollbar-info border rounded border-success mx-1 d-flex align-items-start d-flex justify-content-center">
                               <div class="row justify-content-center">
                                     <div class="col text-center">
                                     <a href="{{ colonna.get_absolute_url }}" class="col-title text-uppercase stretched-link text-decoration-none">{{ colonna.nome }}</a>
@@ -27,22 +27,24 @@
                                     <div class="w-100"></div>
 
                               {% for card in colonna.get_cards %}
-                                    <div class="col-12 m-0 p-0" style="max-width:200px">
+                                    <div class="col-12 m-0 p-0 d-flex justify-content-center">
                                           <div class="card border-secondary mx-2 my-1 p-0">
                                             <div class="card-body text-secondary p-0 m-0">
                                                 <div class="container m-0 p-0">
                                                     <div class="row m-0 px-2 pt-1 pb-0">
-                                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">{{ card.nome }}</div>
+                                                        <div class="col-10 card-title p-0 m-0 d-flex justify-content-start"><a href="#">{{ card.nome }}</a></div>
                                                     <div class="col-2 edit d-flex justify-content-end p-0 m-0">
                                                       <a href="#" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a></div>
                                                     <hr>
                                                 </div>
                                                 </div>
-                                                <div class="card-text mx-1 my-0"><hr>{{ card.descrizione }}<hr>
-                                                    <div class="card-details"><b>Story points: </b>{{ card.story_points }}</div>
-                                                    <div class="card-details"><b>Added: </b>{{ card.data_creazione }}</div>
-                                                    <div class="card-details"><b>Until: </b>{{ card.data_scadenza }}</div>
-
+                                                <div class="card-hidden">
+                                                    <div class="card-description mx-1 my-0" ><hr>{{ card.descrizione }}<hr></div>
+                                                    <div class="card-details mx-1 my-0">
+                                                    <div><b>Story points: </b>{{ card.story_points }}</div>
+                                                    <div><b>Added: </b>{{ card.data_creazione }}</div>
+                                                    <div><b>Until: </b>{{ card.data_scadenza }}</div>
+                                                    </div>
                                                 </div>
                                                 <hr>
                                                 <div class="container mb-2 mr-1 ml-1 p-0 ">

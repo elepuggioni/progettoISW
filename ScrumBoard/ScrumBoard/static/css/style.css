@@ -53,10 +53,13 @@ a:hover {
 }
 
 .board-box{
+    min-width:300px;
+    max-width:100%;
     padding-top:8px;
     padding-bottom:8px;
     background-color: #EAEDE8;
     overflow-x:auto;
+
 }
 
 .board-button{
@@ -66,11 +69,12 @@ a:hover {
 }
 
 .board-column{
-    max-width:20%;
-    min-width:15%;
-    max-height:750px;
+    min-width:175px;
+    max-width:175px;
     background-color: #CAD2C5;
-    min-height: 300px;
+    min-height:400px;
+    max-height:400px;
+    overflow-y:auto;
     transition: 0.3s;
 }
 
@@ -83,11 +87,12 @@ a:hover {
     color:#CAD2C5;
 }
 
-.card:hover .card-text{
-    display:block;
-    height: auto;
-    opacity:1;
-    padding-bottom: 4px;
+.card{
+    min-width:100px;
+    max-width:150px;
+}
+
+.card-body{
 
 }
 
@@ -101,22 +106,6 @@ a:hover {
     margin-bottom:4px;
     margin-top:4px;
     padding:0px;
-    }
-
-.card-text{
-    text-align:center;
-    font-size:14px;
-    height:0px;
-    opacity:0;
-    transition: padding-bottom .4s ease-in-out, opacity .4s ease-in-out;
-    padding-top: 4px;
-    padding-bottom:2px;
-    overflow: hidden;
-}
-
-.card-link{
-    text-align:center;
-    font-size:14px;
 }
 
 .card-edit{
@@ -129,8 +118,41 @@ a:hover {
     transition: .2s;
 }
 
+.card:hover .card-hidden{
+    display:block;
+    height:auto;
+
+    opacity:1;
+    padding-bottom: 4px;
+}
+
+.card-hidden{
+    text-align:center;
+    font-size:14px;
+    height:0px;
+    opacity:0;
+    transition: padding-bottom .4s ease-in-out, opacity .4s ease-in-out;
+    padding-top: 4px;
+    padding-bottom:2px;
+    overflow: hidden;
+}
+
+.card-description{
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.card-link{
+    text-align:center;
+    font-size:14px;
+}
+
 .card-details{
     text-align:start;
+    white-space: normal;
+    min-height:;
     padding:4px;
     padding:4px;
 }
@@ -140,6 +162,25 @@ a:hover {
     font-weight:bold;
     text-align:center;
     opacity: .8;
+}
+
+.scrollbar-info::-webkit-scrollbar-track {
+    background-color: #CAD2C5;
+    border-radius: 10px;
+}
+
+.scrollbar-info::-webkit-scrollbar {
+    width: 6px;
+    background-color: #CAD2C5;
+}
+
+.scrollbar-info::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: #999999;
+}
+
+.scrollbar-info {
+    scrollbar-color: #CAD2C5;
 }
 
 

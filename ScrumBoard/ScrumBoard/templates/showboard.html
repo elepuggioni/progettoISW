@@ -4,7 +4,17 @@
 
 {% block content %}
       {% if board %}
-      <h3 class="mb-3">{{ board.nome }}</h3>
+    <div class="container m-0 p-0">
+        <div class="row m-0 p-0">
+            <h3 class="col">{{ board.nome }}</h3>
+            <div class="col-7 d-flex justify-content-end">
+            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Utente</button>
+            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Colonna</button>
+            <button class="col-3 btn btn-outline-info board-button align-self-center">Aggiungi Card</button>
+            <button class="col-3 btn btn-outline-info board-button align-self-center">Burndown</button>
+            </div>
+        </div>
+    </div>
             <hr>
             <div class="container-fluid board-box d-flex flex-row mb-3 rounded">
                   {% for colonna in board.get_colonne %}
@@ -17,15 +27,31 @@
                                     <div class="w-100"></div>
 
                               {% for card in colonna.get_cards %}
-                                    <div class="col-12 m-0 p-0" style="max-width:180px">
-                                          <div class="card border-secondary mx-2 my-1 p-1">
+                                    <div class="col-12 m-0 p-0" style="max-width:200px">
+                                          <div class="card border-secondary mx-2 my-1 p-0">
                                             <div class="card-body text-secondary p-0 m-0">
-                                              <div class="card-title m-0 p-0">{{ card.nome }}<hr></div>
-                                              <div class="card-text mx-1">{{ card.descrizione }}<hr></div>
-                                                  <div class="col d-flex justify-content-center">
-                                                      <a href="#" class="card-link ">Modifica</a>
-                                                  </div>
+                                                <div class="container m-0 p-0">
+                                                    <div class="row m-0 px-2 pt-1 pb-0">
+                                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">{{ card.nome }}</div>
+                                                    <div class="col-2 edit d-flex justify-content-end p-0 m-0">
+                                                      <a href="#" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a></div>
+                                                    <hr>
+                                                </div>
+                                                </div>
+                                                <div class="card-text mx-1 my-0"><hr>{{ card.descrizione }}<hr>
+                                                    <div class="card-details"><b>Story points: </b>{{ card.story_points }}</div>
+                                                    <div class="card-details"><b>Added: </b>{{ card.data_creazione }}</div>
+                                                    <div class="card-details"><b>Until: </b>{{ card.data_scadenza }}</div>
 
+                                                </div>
+                                                <hr>
+                                                <div class="container mb-2 mr-1 ml-1 p-0 ">
+                                                    <div class="row m-0 p-0 justify-content-start">
+                                                        <!-- for user in card.get_users ; break row after 6 users -->
+                                                        <a href="#" class="col-2 m-0 p-0 user-initials ">EP</a>
+                                                        <a href="#" class="col-2 m-0 p-0 user-initials">CP</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                           </div>
                                     </div>

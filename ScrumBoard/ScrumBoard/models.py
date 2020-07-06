@@ -189,5 +189,10 @@ class Card(models.Model):
 
         return date.today() > self.data_scadenza
 
+    #questa mi serve per finire l'html di showboard va deciso come implementarlo
+    #def get_users(self):
+        #return User.objects.all().filter(card=self)
+
+
     def __str__(self):
         return self.nome

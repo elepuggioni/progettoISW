@@ -59,6 +59,12 @@ a:hover {
     overflow-x:auto;
 }
 
+.board-button{
+    text-align:center;
+    margin-left:4px;
+    margin-right:4px;
+}
+
 .board-column{
     max-width:20%;
     min-width:15%;
@@ -77,15 +83,12 @@ a:hover {
     color:#CAD2C5;
 }
 
-.card{
-}
-
 .card:hover .card-text{
     display:block;
     height: auto;
     opacity:1;
-    padding-top: 6px;
-    padding-bottom:0px;
+    padding-bottom: 4px;
+
 }
 
 .card-title{
@@ -94,18 +97,20 @@ a:hover {
     font-size:16px;
 }
 
-.card-title > hr{
-    margin-top:6px;
+.card hr {
     margin-bottom:4px;
-}
+    margin-top:4px;
+    padding:0px;
+    }
 
 .card-text{
     text-align:center;
     font-size:14px;
     height:0px;
     opacity:0;
-    transition: padding-top .4s ease-in-out, opacity .4s ease-in-out;
-    padding-top: 2px;
+    transition: padding-bottom .4s ease-in-out, opacity .4s ease-in-out;
+    padding-top: 4px;
+    padding-bottom:2px;
     overflow: hidden;
 }
 
@@ -113,4 +118,28 @@ a:hover {
     text-align:center;
     font-size:14px;
 }
+
+.card-edit{
+    padding-top:2px;
+    opacity:.2;
+}
+
+.card-edit:hover{
+    opacity:.4;
+    transition: .2s;
+}
+
+.card-details{
+    text-align:start;
+    padding:4px;
+    padding:4px;
+}
+
+.user-initials{
+    font-size:16px;
+    font-weight:bold;
+    text-align:center;
+    opacity: .8;
+}
+
 

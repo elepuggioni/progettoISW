@@ -46,8 +46,7 @@ class Board(models.Model):
 
     def conta_storypoints_usati(self):
         """Conta il totale dei punti storia utilizzati"""
-        colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
-        return colonne[-1].conta_storypoints()
+        return self.get_ultima_colonna().conta_storypoints()
 
     def num_carte(self):
         """Conta il numero totatle di cards nella board"""
@@ -79,6 +78,10 @@ class Board(models.Model):
     def Board(request, board_id):
         def get_absolute_url(self):
             return reverse('show-board', args=[str(self.id)])
+
+    def get_ultima_colonna(self):
+        colonne = list(Colonna.objects.filter(board=self))
+        return colonne[-1]
 
     def __str__(self):
         return self.nome
@@ -130,7 +133,7 @@ class Colonna(models.Model):
         """Conta il numero di punti storia totali nella colonna"""
         totale = 0
         for card in Card.objects.filter(colonna=self):
-            totale += Card.story_points
+            totale += card.story_points
         return totale
 
     def conta_scadute(self):
@@ -146,6 +149,10 @@ class Colonna(models.Model):
     def Colonna(request, colonna_id):
         def get_absolute_url(self):
             return reverse('show-colonna', args=[str(self.id)])
+
+    def is_ultima_colonna(self):
+        """Restituisce true se questa colonna è l'ultima colonna della board"""
+        return self == self.board.get_ultima_colonna()
 
     def __str__(self):
         return self.nome
@@ -183,11 +190,10 @@ class Card(models.Model):
 
     def is_scaduta(self):
         """Restituisce true se la card è scaduta"""
-        colonne = list(Colonna.objects.filter(board=self.colonna.board).order_by('pk'))
-        if self.colonna == colonne[-1]:
+        if self.colonna.is_ultima_colonna():    #una card non può essere scaduta se è completata
             return False
-
         return date.today() > self.data_scadenza
+
 
     #questa mi serve per finire l'html di showboard va deciso come implementarlo
     #def get_users(self):

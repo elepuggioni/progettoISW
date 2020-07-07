@@ -80,7 +80,7 @@ class Board(models.Model):
             return reverse('show-board', args=[str(self.id)])
 
     def get_ultima_colonna(self):
-        colonne = list(Colonna.objects.filter(board=self))
+        colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
         return colonne[-1]
 
     def __str__(self):

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 
     <title>
         {% block title %} Title {% endblock %}
@@ -34,6 +35,16 @@
                 <div class="col">
                      <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
                 </div>
+                <!--else
+                <div class="col">
+                     <a href="{% url 'register' %}" class="btn btn-outline-light">Registrati</a>
+                </div>
+
+                oppure se ci troviamo sulla pagina di registrazione:
+                <div class="col">
+                     <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+                </div>
+                -->
             </div>
         </div>
     </div>

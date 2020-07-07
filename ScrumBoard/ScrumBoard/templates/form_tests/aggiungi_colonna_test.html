@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <p>Crea colonna</p>
+
+    <form action="/test/crea_colonna/" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+    </form>
+{% endblock content%}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <p>Crea nuova board</p>
+
+    <form action='/test/modifica_board/' method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+    </form>
+
+{% endblock content %}

@@ -230,4 +230,12 @@ a:hover {
 	margin-top: 10px;
 }
 
+.burndown_row{
+min-width:180px;
+max-width:180px;
 
+    background-color: #CAD2C5;
+    margin:6px;
+    text-align:center;
+
+}

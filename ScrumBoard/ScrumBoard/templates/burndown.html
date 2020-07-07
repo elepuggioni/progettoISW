@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h3 class="mb-3" style="text-transform: uppercase;">{{ board.nome }} - burndown</h3>
+        <hr>
+
+        <div class="container rounded" style="background-color: #EAEDE8;">
+            <div class="row">
+                <div class="col-2 burndown_row n_card rounded"><b>Carte totali:</b></div>
+                <div class="col-2 burndown_row n_card rounded" style="background-color: #52796F; color:#CAD2C5"> {{ board.num_carte }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 burndown_row n_card_col rounded"><b>Carte in:</b></div>
+                <div class="row col-10">
+                    {% for colonna in board.get_colonne %}
+                        <div class="col-2 burndown_row n_card rounded" style="text-transform: uppercase; background-color: #52796F; color:#CAD2C5">
+                            {{ colonna.nome }}: {{ colonna.num_carte }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2 burndown_row n_card_exp rounded"><b>Carte scadute:</b></div>
+                <div class="col-2 burndown_row n_card rounded" style="background-color: #52796F; color:#CAD2C5">{{ board.num_conta_scadute }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-2 burndown_row storypoints rounded"><b>Story points:</b></div>
+                <div class="col-2 burndown_row n_card rounded" style="background-color: #52796F; color:#CAD2C5">{{ board.conta_storypoints }}</div>
+            </div>
+
+                </div>
+{% endblock %}

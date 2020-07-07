@@ -68,6 +68,7 @@ class Board(models.Model):
         #chiama colonna.conta_storypoints()
         pass
 
+
     def aggiungi_card(self):
         #chiama colonna.crea_card()
         pass

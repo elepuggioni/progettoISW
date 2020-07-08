@@ -8,13 +8,53 @@
         <div class="row m-0 p-0">
             <h3 class="col-md-4">{{ board.nome }}</h3>
             <div class="col-md-8 d-flex justify-content-end">
-            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Utente</button>
-            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Colonna</button>
-            <button class="col btn btn-outline-info board-button align-self-center">Aggiungi Card</button>
-            <button class="col btn btn-outline-info board-button align-self-center">Burndown</button>
+            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_user()">Aggiungi Utente</button>
+            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_column()">Aggiungi Colonna</button>
+            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_card()">Aggiungi Card</button>
+                <a href="../../burndown/{{ board_id }}" class="col btn btn-outline-info board-button align-self-center">Burndown</a>
             </div>
         </div>
     </div>
+
+    <div id="add_user" class="overlay">
+      <div class="overlay-content">
+                <div class="overlay-window">
+                    <div class="row p-0 m-0">
+                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi utente</div>
+                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
+                            <a href="javascript:void(0)" class="closebtn" onclick="close_user()">&times;</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <div id="add_column" class="overlay">
+      <div class="overlay-content">
+                <div class="overlay-window">
+                    <div class="row p-0 m-0">
+                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi colonna</div>
+                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
+                            <a href="javascript:void(0)" class="closebtn" onclick="close_column()">&times;</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <div id="add_card" class="overlay">
+      <div class="overlay-content">
+                <div class="overlay-window">
+                    <div class="row p-0 m-0">
+                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi card</div>
+                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
+                            <a href="javascript:void(0)" class="closebtn" onclick="close_card()">&times;</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
             <hr>
             <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1">
                   {% for colonna in board.get_colonne %}
@@ -65,10 +105,32 @@
                   {% endfor %}
             </div>
 
+        <script>
+        function add_user() {
+          document.getElementById("add_user").style.height = "100%";
+        }
 
+        function close_user() {
+          document.getElementById("add_user").style.height = "0%";
+        }
 
+        function add_column() {
+          document.getElementById("add_column").style.height = "100%";
+        }
 
+        function close_column() {
+          document.getElementById("add_column").style.height = "0%";
+        }
 
+        function add_card() {
+          document.getElementById("add_card").style.height = "100%";
+        }
+
+        function close_card() {
+          document.getElementById("add_card").style.height = "0%";
+        }
+
+        </script>
       {% else %}
       <p>No Board Found for id: {{ board_id }}</p>
       {% endif %}

@@ -34,8 +34,7 @@ def crea_board(request):
             return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
     else:
         board_form = BoardForm()
-    return render(request, "/dashboard/crea_board.html",
-                  {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
+    return render(request, "crea_board.html", {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
     #return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
 
 

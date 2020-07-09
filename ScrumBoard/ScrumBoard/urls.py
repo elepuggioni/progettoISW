@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', views.hello),
     path(r'dashboard/', views.dashboard),
-    path(r'dashboard/crea_board', views.crea_board, name='add-board'),
+    path(r'dashboard/crea_board', views.crea_board, name='crea-board'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
@@ -36,9 +36,9 @@ urlpatterns = [
     path('', include('Accounts.urls')),
 
     #test per la visualizzazione dei forms
-    path(r'test/crea_board/', views.crea_board, name='crea-board'),
-    path(r'test/crea_colonna/<board_id>/', views.aggiungi_colonna, name='aggiungi-colonna'),
-    path(r'test/crea_card/<board_id>/', views.aggiungi_card, name='aggiungi-card'),
+    #path(r'test/crea_board/', views.crea_board, name='crea-board'),
+    #path(r'test/crea_colonna/<board_id>/', views.aggiungi_colonna, name='aggiungi-colonna'),
+    #path(r'test/crea_card/<board_id>/', views.aggiungi_card, name='aggiungi-card'),
     path(r'test/modifica_board/<board_id>/', views.modifica_board, name='modifica-board'),
     path(r'test/modifica_colonna/<colonna_id>', views.modifica_colonna, name='modifica-colonna'),
     path(r'test/modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),

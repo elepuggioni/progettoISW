@@ -50,10 +50,12 @@ a {
 
 a:hover {
     color: #CAD2C5;
+    text-decoration: none!important;
 }
 
 .board-box{
     min-width:300px;
+    min-height:400px;
     max-width:100%;
     padding-top:8px;
     padding-bottom:8px;

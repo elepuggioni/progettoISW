@@ -44,7 +44,7 @@ def logoutUser(request):
     return redirect('login')
 
 def home(request):
-    return render(request, 'dashboard.html')
+    return render(request, 'login.html')
 
 def profilo(request):
     return render(request, 'profilo.html')

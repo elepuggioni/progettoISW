@@ -57,7 +57,9 @@
     </div>
 -->
             <hr>
-            <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1">
+            <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1 h-100">
+                  {% if board.get_colonne %}
+
                   {% for colonna in board.get_colonne %}
 
                         <div class="col board-column scrollbar-info border rounded border-success mx-1 d-flex align-items-start d-flex justify-content-center">
@@ -104,6 +106,12 @@
                         </div>
                         </div>
                   {% endfor %}
+
+                {% else %}
+                <div class="d-flex justify-content-center align-content-center">
+                    <p>La board è ancora vuota :(</p>
+                </div>
+                {% endif %}
             </div>
 <!--
         <script>

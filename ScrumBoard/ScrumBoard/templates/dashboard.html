@@ -3,16 +3,46 @@
 {% block title %} Le mie board {% endblock %}
 
 {% block content %}
-        <h3 class="mb-3">LE TUE BOARD</h3>
-        <hr>
-        <div class="row h-100">
-            {% for board in board %}
-            <div class="col-2 bg-column border rounded border-success mx-2 d-flex justify-content-center align-items-center">
-                <a href="{{ board.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none">{{ board.nome }}</a>
-            </div>
-            {% endfor %}
-            <div class="col bg-add rounded d-flex justify-content-center align-items-center">
-                <button type="button" class="btn btn-outline-success border-0 stretched-link">Aggiungi board +</button>
-            </div>
-        </div>
+<h3 class="mb-3">LE TUE BOARD</h3>
+<hr>
+
+<div id="add_board" class="overlay">
+      <div class="overlay-content">
+          <div class="overlay-window">
+              <div class="row p-0 m-0">
+                  <h3 class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Crea una nuova board</h3>
+                  <div class="col-1 pr-2 m-0 d-flex justify-content-end">
+                      <a href="javascript:void(0)" class="closebtn" onclick="close_board()">&times;</a>
+                  </div>
+              </div>
+              <hr>
+              <form action='/dashboard/' method="post">
+                  {% csrf_token %}
+                  {{form.as_p}}
+              </form>
+          </div>
+      </div>
+</div>
+
+<div class="row h-100">
+    {% for board in board %}
+    <div class="col-2 bg-column border rounded border-success mx-2 d-flex justify-content-center align-items-center">
+        <a href="{{ board.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none">{{ board.nome }}</a>
+    </div>
+    {% endfor %}
+
+    <div class="col bg-add rounded d-flex justify-content-center align-items-center">
+        <button type="button" class="btn btn-outline-success border-0 stretched-link" onClick="add_board()">Aggiungi board +</button>
+    </div>
+</div>
+
+    <script>
+        function add_board() {
+        document.getElementById("add_board").style.height = "100%";
+        }
+
+        function close_board() {
+          document.getElementById("add_board").style.height = "0%";
+        }
+    </script>
 {% endblock %}

@@ -29,7 +29,7 @@ urlpatterns = [
     path(r'dashboard/', views.dashboard),
     path(r'dashboard/crea_board', views.crea_board, name='add-board'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
-    path(r'board/<board_id>/aggiungi_card/<column_id>', views.aggiungi_card, name='add-card'),
+    path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
     path(r'board/<board_id>/aggiungi_utente', views.aggiungi_utente, name='add-user'),
     path(r'burndown/<board_id>', views.burndown, name='burndown'),

@@ -10,8 +10,6 @@ class BoardForm(forms.Form):
     )
 
 
-
-
 class ColumnForm(forms.Form):
     nome_colonna = forms.CharField(
         label="Nome colonna",
@@ -27,6 +25,7 @@ class UserForm(forms.Form):
         min_length=3
     )
 
+
 def filtra_colonne(*args, **kwargs):
     board_id = kwargs.pop('board')
     queryset = Colonna.objects.filter(board=board_id)
@@ -40,18 +39,20 @@ def filtra_colonne(*args, **kwargs):
         descrizione = forms.CharField(
             label="Descrizione",
             max_length=50,
-            min_length=3
+            min_length=3,
+            required=False
         )
         data_scadenza = forms.DateField(
-            label="Data scadenza"
+            label="Data scadenza",
+            required=False
         )
         story_points = forms.IntegerField(
             label="Story points",
-            max_value=20  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
+            max_value=20,  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
+            required=False
         )
         colonna = forms.ModelChoiceField(
             queryset=queryset,
             to_field_name='nome'
         )
-
     return CardForm(*args, **kwargs)

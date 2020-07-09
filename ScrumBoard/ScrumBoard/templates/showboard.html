@@ -8,14 +8,15 @@
         <div class="row m-0 p-0">
             <h3 class="col-md-4">{{ board.nome }}</h3>
             <div class="col-md-8 d-flex justify-content-end">
-            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_user()">Aggiungi Utente</button>
-            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_column()">Aggiungi Colonna</button>
-            <button class="col btn btn-outline-info board-button align-self-center" onClick="add_card()">Aggiungi Card</button>
+            <a href="/board/{{ board_id }}/aggiungi_utente" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Utente</a>
+            <a href="/board/{{ board_id }}/aggiungi_colonna" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Colonna</a>
+            <a href="/board/{{ board_id }}/aggiungi_card" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Card</a>
                 <a href="../../burndown/{{ board_id }}" class="col btn btn-outline-info board-button align-self-center">Burndown</a>
             </div>
         </div>
     </div>
 
+<!--
     <div id="add_user" class="overlay">
       <div class="overlay-content">
                 <div class="overlay-window">
@@ -54,7 +55,7 @@
                 </div>
         </div>
     </div>
-
+-->
             <hr>
             <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1">
                   {% for colonna in board.get_colonne %}
@@ -104,7 +105,7 @@
                         </div>
                   {% endfor %}
             </div>
-
+<!--
         <script>
         function add_user() {
           document.getElementById("add_user").style.height = "100%";
@@ -131,6 +132,7 @@
         }
 
         </script>
+-->
       {% else %}
       <p>No Board Found for id: {{ board_id }}</p>
       {% endif %}

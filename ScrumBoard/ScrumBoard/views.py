@@ -31,19 +31,18 @@ def crea_board(request):
             )
             new_board.save()
             # da assegnare ad un utente a seconda di come decidiamo di gestire il tutto
-            return HttpResponse("Board creata")
+            return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
     else:
         board_form = BoardForm()
-    """return render(request, "aggiungi_board.html",
-                  {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
+    return render(request, "/dashboard/crea_board.html",
+                  {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
+    #return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
 
 
 def aggiungi_card(request, board_id):
-
     board = Board.objects.get(id=board_id)
     if request.method == "POST":
-        card_form = filtra_colonne(board=board_id)
+        card_form = filtra_colonne(request.POST, board=board_id)
 
         if card_form.is_valid():
             new_card = Card(
@@ -51,15 +50,16 @@ def aggiungi_card(request, board_id):
                 descrizione=card_form.cleaned_data['descrizione'],
                 data_scadenza=card_form.cleaned_data['data_scadenza'],  # la data di inizio dovrebbe essere automatica
                 story_points=card_form.cleaned_data['story_points'],
-                colonna=card_form.cleaned_data['']
+                colonna=card_form.cleaned_data['colonna']
             )
             new_card.save()
-            return HttpResponse("Card aggiunta")
+            return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
+
     else:
         card_form = filtra_colonne(board=board_id)
-    """return render(request, "aggiungi_card.html",
-                  {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/aggiungi_card_test.html", {'form':card_form})
+    return render(request, "aggiungi_card.html",
+                  {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero
+    #return render(request, "form_tests/aggiungi_card_test.html", {'form':card_form})
 
 
 def aggiungi_colonna(request, board_id):
@@ -71,12 +71,12 @@ def aggiungi_colonna(request, board_id):
                 board=Board.objects.get(pk=board_id)
             )
             new_column.save()
-            return HttpResponse("Colonna aggiunta")
+            return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
     else:
         column_form = ColumnForm()
-    """return render(request, "aggiungi_colonna.html",
-                  {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/aggiungi_colonna_test.html", {'form':column_form, 'board_id':board_id})
+    return render(request, "aggiungi_colonna.html",
+                  {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero
+    #return render(request, "form_tests/aggiungi_colonna_test.html", {'form':column_form, 'board_id':board_id})
 
 
 def aggiungi_utente(request, board_id):

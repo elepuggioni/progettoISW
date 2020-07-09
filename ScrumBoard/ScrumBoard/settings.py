@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'jquery',
     'bootstrap4',
+    'widget_tweaks',
     'ScrumBoard',
     'Accounts'
 ]

@@ -32,10 +32,11 @@
     {% endfor %}
 
     <div class="col bg-add rounded d-flex justify-content-center align-items-center">
-        <button type="button" class="btn btn-outline-success border-0 stretched-link" onClick="add_board()">Aggiungi board +</button>
+        <a href="/dashboard/crea_board" type="button" class="btn btn-outline-success border-0 stretched-link">Aggiungi board +</a>
     </div>
 </div>
 
+<!--
     <script>
         function add_board() {
         document.getElementById("add_board").style.height = "100%";
@@ -45,4 +46,5 @@
           document.getElementById("add_board").style.height = "0%";
         }
     </script>
+    -->
 {% endblock %}

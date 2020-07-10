@@ -28,7 +28,7 @@ def crea_board(request):
         board_form = BoardForm(request.POST)
         if board_form.is_valid():
             new_board = Board(
-                nome=board_form.cleaned_data['nome_board']
+                nome=board_form.cleaned_data['nome']
             )
             new_board.save()
             # da assegnare ad un utente a seconda di come decidiamo di gestire il tutto
@@ -41,10 +41,10 @@ def crea_board(request):
 
 def aggiungi_card(request, board_id):
     if request.method == "POST":
-        card_form = filtra_colonne(request.POST, board=board_id)
+        card_form = filtra_colonne(board_id, request.POST)
         if card_form.is_valid():
             new_card = Card(
-                nome=card_form.cleaned_data['nome_card'],
+                nome=card_form.cleaned_data['nome'],
                 descrizione=card_form.cleaned_data['descrizione'],
                 data_scadenza=card_form.cleaned_data['data_scadenza'],  # la data di inizio dovrebbe essere automatica
                 story_points=card_form.cleaned_data['story_points'],
@@ -71,7 +71,7 @@ def aggiungi_colonna(request, board_id):
         column_form = ColumnForm(request.POST)
         if column_form.is_valid():
             new_column = Colonna(
-                nome=column_form.cleaned_data['nome_colonna'],
+                nome=column_form.cleaned_data['nome'],
                 board=Board.objects.get(pk=board_id)
             )
             new_column.save()
@@ -105,7 +105,7 @@ def modifica_board(request, board_id):
     if request.method=="POST":
         board_form = BoardForm(request.POST)
         if board_form.is_valid():
-            board.nome = board_form.cleaned_data('nome_board')
+            board.nome = board_form.cleaned_data('nome')
             board.save()
             return HttpResponse("Board modificata")
     else:
@@ -120,7 +120,7 @@ def modifica_colonna(request, colonna_id):
     if request.method == "POST":
         column_form = ColumnForm(request.POST)
         if column_form.is_valid():
-            colonna.nome=column_form.cleaned_data['nome_colonna'],
+            colonna.nome=column_form.cleaned_data['nome'],
             colonna.save()
             return HttpResponse("Colonna modificata")
     else:
@@ -134,9 +134,9 @@ def modifica_card(request, card_id):
     card = Card.objects.get(id=card_id)
     board_id = card.colonna.board.id
     if request.method == "POST":
-        card_form = filtra_colonne(data=request.POST, board=board_id)
+        card_form = filtra_colonne(board=board_id, data=request.POST)
         if card_form.is_valid():
-            card.nome=card_form.cleaned_data['nome_card'],
+            card.nome=card_form.cleaned_data['nome'],
             card.descrizione=card_form.cleaned_data['descrizione'],
             card.data_scadenza=card_form.cleaned_data['data_scadenza'],  # la data di inizio dovrebbe essere automatica
             card.story_points=card_form.cleaned_data['story_points'],
@@ -145,12 +145,14 @@ def modifica_card(request, card_id):
             return HttpResponse("Card aggiunta")
     else:
         card_form = filtra_colonne(board=board_id,
-                                   data={'nome_card':card.nome,
+                                   data={'nome':card.nome,
                                          'descrizione':card.descrizione,
                                          'data_scadenza':card.data_scadenza,
                                          'story_points':card.story_points,
                                          'colonna':card.colonna
         })
+        """card_form = filtra_colonne(board=board_id,
+                                   data=card.__dict__)"""
     """return render(request, "aggiungi_card.html",
                   {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero"""
     return render(request, "form_tests/modifica_card_test.html", {'form':card_form})

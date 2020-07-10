@@ -50,7 +50,8 @@ def filtra_colonne(board, *args, **kwargs):
         story_points = forms.IntegerField(
             label="Story points",
             max_value=20,  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
-            required=False
+            required=False,
+            initial=0
         )
         colonna = forms.ModelChoiceField(
             queryset=queryset,

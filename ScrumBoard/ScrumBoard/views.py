@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django import forms
 from django.db import *
@@ -125,9 +125,10 @@ def modifica_colonna(request, colonna_id):
             return HttpResponse("Colonna modificata")
     else:
         column_form = ColumnForm({'nome_colonna':colonna.nome})
+        lista_cards = Card.objects.filter(colonna=colonna_id)
     """return render(request, "aggiungi_colonna.html",
                   {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/modifica_colonna_test.html", {'form':column_form, 'board_id':colonna_id})
+    return render(request, "form_tests/modifica_colonna_test.html", {'form':column_form, 'colonna_id':colonna_id, 'cards':lista_cards})
 
 def modifica_card(request, card_id):
 
@@ -167,3 +168,20 @@ def burndown(request, board_id):
         'board': board
     }
     return render(request, "burndown.html", context)
+
+def cancella_board(request, board_id):
+    """Elimina la board indicata"""
+    Board.objects.get(id=board_id).delete()
+    return HttpResponseRedirect('dashboard/')
+
+def cancella_colonna(request, colonna_id):
+    """Elimina la colonna indicata"""
+    board = Colonna.objects.get(id=colonna_id).board
+    Colonna.objects.get(id=colonna_id).delete()
+    return HttpResponseRedirect('board/%d/' % board.id)
+
+def cancella_card(request, card_id):
+    """Elimina la card indicata"""
+    board = Card.objects.get(id=card_id)
+    Card.objects.get(id=card_id).delete()
+    return HttpResponseRedirect('board/%d/' % board.id)

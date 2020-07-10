@@ -64,9 +64,10 @@ class Board(models.Model):
         return count
 
     def conta_storypoints(self):
-        #per ogni colonna
-        #chiama colonna.conta_storypoints()
-        pass
+        totale = 0
+        for colonna in Colonna.objects.all().filter(board=self):
+            totale += colonna.conta_storypoints()
+        return totale
 
 
     def aggiungi_card(self):
@@ -161,10 +162,10 @@ class Colonna(models.Model):
 
 class Card(models.Model):
     nome = models.CharField(max_length=50)
-    descrizione = models.TextField()
+    descrizione = models.TextField(blank=True, default="")
     data_creazione = models.DateTimeField(auto_now_add=True)
-    data_scadenza = models.DateField()
-    story_points = models.IntegerField()
+    data_scadenza = models.DateField(null=True)
+    story_points = models.IntegerField(null=False, blank=True, default=0)
     colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
 
     """
@@ -192,6 +193,8 @@ class Card(models.Model):
     def is_scaduta(self):
         """Restituisce true se la card è scaduta"""
         if self.colonna.is_ultima_colonna():    #una card non può essere scaduta se è completata
+            return False
+        if self.data_scadenza is None:
             return False
         return date.today() > self.data_scadenza
 

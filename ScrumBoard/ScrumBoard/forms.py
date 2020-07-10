@@ -13,7 +13,7 @@ class BoardForm(forms.Form):
 class ColumnForm(forms.Form):
     nome_colonna = forms.CharField(
         label="Nome colonna",
-        max_length=24,
+        max_length=16,
         min_length=3
     )
 
@@ -24,6 +24,7 @@ class UserForm(forms.Form):
         max_length=24,
         min_length=3
     )
+
 
 
 def filtra_colonne(*args, **kwargs):

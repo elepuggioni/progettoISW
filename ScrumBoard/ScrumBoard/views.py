@@ -1,7 +1,8 @@
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
-
+from django.db import *
 from ScrumBoard.forms import *
 from ScrumBoard.models import *
 
@@ -39,10 +40,8 @@ def crea_board(request):
 
 
 def aggiungi_card(request, board_id):
-    board = Board.objects.get(id=board_id)
     if request.method == "POST":
         card_form = filtra_colonne(request.POST, board=board_id)
-
         if card_form.is_valid():
             new_card = Card(
                 nome=card_form.cleaned_data['nome_card'],
@@ -51,7 +50,13 @@ def aggiungi_card(request, board_id):
                 story_points=card_form.cleaned_data['story_points'],
                 colonna=card_form.cleaned_data['colonna']
             )
-            new_card.save()
+            try:
+                new_card.save()
+            except IntegrityError:
+                if new_card.story_points is None:
+                    new_card.story_points = 0
+                new_card.save()
+
             return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
 
     else:

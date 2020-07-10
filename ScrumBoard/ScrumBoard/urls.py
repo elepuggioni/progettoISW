@@ -26,7 +26,7 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', views.hello),
-    path(r'dashboard/', views.dashboard),
+    path(r'dashboard/', views.dashboard, name='dashboard'),
     path(r'dashboard/crea_board', views.crea_board, name='crea-board'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),

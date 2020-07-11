@@ -50,13 +50,7 @@ def aggiungi_card(request, board_id):
                 story_points=card_form.cleaned_data['story_points'],
                 colonna=card_form.cleaned_data['colonna']
             )
-            try:
-                new_card.save()
-            except IntegrityError:
-                if new_card.story_points is None:
-                    new_card.story_points = 0
-                new_card.save()
-
+            new_card.save()
             return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
 
     else:
@@ -75,6 +69,7 @@ def aggiungi_colonna(request, board_id):
                 board=Board.objects.get(pk=board_id)
             )
             new_column.save()
+
             return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
     else:
         column_form = ColumnForm()

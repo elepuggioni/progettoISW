@@ -64,8 +64,8 @@
 
         <div class="col board-column scrollbar-info border rounded border-success mx-1 d-flex align-items-start d-flex justify-content-center">
             <div class="row justify-content-center">
-                <div class="col text-center">
-                    <a href="{{ colonna.get_absolute_url }}" class="col-title text-uppercase stretched-link text-decoration-none">{{ colonna.nome }}</a>
+                <div class="col-12 col_title">
+                    <a href="{{ colonna.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none">{{ colonna.nome }}</a>
                 </div>
                 <div class="w-100"></div>
                 {% for card in colonna.get_cards %}

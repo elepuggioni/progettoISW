@@ -18,10 +18,10 @@
                 <div class="row col-10">
                     {% for colonna in board.get_colonne %}
                         <div class="col-2 burndown_row rounded" style="text-transform: uppercase; background-color: #52796F; color:#CAD2C5">
-                            <div class="row">
-                            <div class="col-5 d-flex justify-content-start" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ colonna.nome }}</div>
-                            <div class="col-2 d-flex justify-content-center">:</div>
-                            <div class="col-5 d-flex justify-content-center">{{ colonna.num_carte }}</div>
+                            <div class="row d-flex justify-content-center px-1">
+                            <div class="col-" style="max-width:115px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{ colonna.nome }}</div>
+                            <div class="col-1 px-0 mx-0">:</div>
+                            <div class="col-1 px-0 mx-0">{{ colonna.num_carte }}</div>
                             </div>
                         </div>
                     {% endfor %}

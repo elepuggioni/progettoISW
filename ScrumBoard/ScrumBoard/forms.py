@@ -38,8 +38,8 @@ def filtra_colonne(board, *args, **kwargs):
         )
         descrizione = forms.CharField(
             label="Descrizione",
-            max_length=50,
-            min_length=3,
+            widget=forms.Textarea(attrs={"rows": 5, "cols": 20}),
+            max_length=500,
             required=False
         )
         data_scadenza = forms.DateField(

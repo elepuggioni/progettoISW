@@ -26,22 +26,14 @@ class Board(models.Model):
         return reverse('show-board', args=[str(self.id)])
 
     def aggiungi_utente(self, utente):
-        #self.partecipanti += User.objects.get(utente)  #aggiunta a lista
-        pass
-
-    def get_utenti(self):
-        #return self.partecipanti
+        #partecipante += User.objects.get(utente) aggiunta a lista
         pass
 
     def elimina_utente(self, utente):
-        """try:
-            self.partecipanti.remove(utente)
-        except:
-            # utente non presente nella lista"""
         pass
 
     def cambia_nome(self, nome):
-        self.nome = nome
+        pass
 
     def num_colonne(self):
         """Restituisce il numero di colonne di questa board"""
@@ -58,7 +50,7 @@ class Board(models.Model):
         return self.get_ultima_colonna().conta_storypoints()
 
     def num_carte(self):
-        """Conta il numero totale di cards nella board"""
+        """Conta il numero totatle di cards nella board"""
         totale = 0
         for colonna in Colonna.objects.filter(board=self):
             totale += colonna.num_carte()

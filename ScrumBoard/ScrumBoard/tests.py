@@ -23,9 +23,9 @@ class ModelTest(TestCase):
 
         # inizializzazione degli utenti
 
+        """"
         self.utente = User(username="Elena", password="admin")
         self.utente.save()
-        """"
         self.utente2 = User(username="Cristina", password="admin")
         self.utente2.save()
 
@@ -50,8 +50,6 @@ class ModelTest(TestCase):
         self.boards.append(Board(nome='Board3'))
         for board in self.boards:
             board.save()
-
-
 
         # inizializzazione delle colonne
         self.colonne = []
@@ -168,7 +166,7 @@ class ModelTest(TestCase):
         for card in self.cards:
             if (card.colonna.board == board and card.is_scaduta()):
                 count += 1
-        return count
+        return count;
 
     def testContaStorypointsUsati(self):
         self.assertEqual(self.boards[0].conta_storypoints_usati(), self.contaStorypointsUsati(self.boards[0]))
@@ -195,6 +193,8 @@ class ModelTest(TestCase):
             self.assertContains(response, colonna.nome)
             for card in Card.objects.filter(colonna=colonna):
                 self.assertContains(response, card.nome)
+
+
 
 if __name__ == '__main__':
     unittest.main()

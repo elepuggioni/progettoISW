@@ -25,16 +25,18 @@ def showboard(request, board_id):
 
 def crea_board(request):
     if request.method == "POST":
-        board_form = BoardForm(request.POST)
+        board_form = add_board(request.POST)
         if board_form.is_valid():
             new_board = Board(
-                nome=board_form.cleaned_data['nome']
+                nome=board_form.cleaned_data['nome'],
+                proprietario=board_form.cleaned_data['proprietario'],
             )
             new_board.save()
-            # da assegnare ad un utente a seconda di come decidiamo di gestire il tutto
+            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'])
+
             return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
     else:
-        board_form = BoardForm()
+        board_form = add_board()
     return render(request, "crea_board.html", {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
     #return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
 
@@ -79,32 +81,32 @@ def aggiungi_colonna(request, board_id):
 
 
 def aggiungi_utente(request, board_id):
+    board = Board.objects.get(pk=board_id)
+
     if request.method == "POST":
-        user_form = UserForm(request.POST)
+        user_form = add_user(request.POST)
         if user_form.is_valid():
-            new_user = User.objects.filter(username=user_form.cleaned_data['username'])
-            if not new_user.exists():  # controllo che esista lo username specficato
-                return HttpResponse("Username non registrato")
-            board = Board.objects.get(pk=board_id)
             # aggiunta utente qui
-            # board.partecipanti.append(new_user) o qualcos altro a seconda di come gestiamo questa parte
-            return HttpResponse("Utente aggiunto alla board")
+            board.partecipanti.set(user_form.cleaned_data['user'])
+            return render(request, "showboard.html", {'board': board, 'board_id': board.pk})
     else:
-        user_form = UserForm()
+        user_form = add_user()
     return render(request, "aggiungi_utente.html",
                   {"form": user_form})  # aggiungi_utente è un placeholder in attesa di quello vero
 
 def modifica_board(request, board_id):
     """Modifica il valore del nome della board"""
     board = Board.objects.get(id=board_id)
-    if request.method=="POST":
-        board_form = BoardForm(request.POST)
+    if request.method == "POST":
+        board_form = add_board(request.POST)
         if board_form.is_valid():
             board.nome = board_form.cleaned_data('nome')
+            board.proprietario = board_form.cleaned_data['proprietario']
             board.save()
+            board.partecipanti.set(board_form.cleaned_data['partecipanti'])
             return HttpResponse("Board modificata")
     else:
-        board_form = BoardForm({'nome_board':board.nome})
+        board_form = add_board(data={'nome': board.nome})
     """return render(request, "aggiungi_board.html",
                       {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero"""
     return render(request, "form_tests/modifica_board_test.html", {'form': board_form})

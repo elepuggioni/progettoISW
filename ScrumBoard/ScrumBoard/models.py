@@ -5,22 +5,11 @@ from django.core.exceptions import *
 
 from django.urls import reverse
 
-
-#class UserMethods(User):
-#    def show_boards(self):
-        #per ogni board presa dal db
-        #board.__str__()
-#        pass
-
-#    class Meta:
-#        proxy = True
-
-
 class Board(models.Model):
     """La rappresentazione di una board"""
     nome = models.CharField(max_length=50)
-    #proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
-    #partecipanti = models.ManyToManyField(User, related_name='contributors')
+    proprietario = models.ForeignKey(User, on_delete=models.CASCADE)
+    partecipanti = models.ManyToManyField(User, related_name='partecipanti')
 
     def get_absolute_url(self):
         return reverse('show-board', args=[str(self.id)])
@@ -168,6 +157,7 @@ class Card(models.Model):
     data_scadenza = models.DateField(null=True)
     story_points = models.IntegerField(null=False, blank=True, default=0)
     colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
+    #users = models.ManyToManyField(User, related_name='contributors')
 
     """
     def aggiungi_utente(self, utente): #utente tipo User

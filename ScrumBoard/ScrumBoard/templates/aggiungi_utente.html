@@ -3,9 +3,12 @@
 {% block title %}Aggiunta utente{% endblock %}
 
 {% block content %}
+<div class="container form_base">
+
 <form method="post" novalidate>
   {% csrf_token %}
   {% include 'form_base.html' with form=form %}
-  <button type="submit" class="btn btn-info">Submit</button>
+  <button type="submit" class="col-12 btn btn-info">Submit</button>
 </form>
+</div>
 {% endblock %}

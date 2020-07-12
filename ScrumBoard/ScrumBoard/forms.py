@@ -1,14 +1,30 @@
 from django import forms
+from django.contrib.auth.models import User
 from bootstrap_datepicker_plus import DatePickerInput
-from ScrumBoard.models import Colonna
+from ScrumBoard.models import *
 
 
-class BoardForm(forms.Form):
-    nome = forms.CharField(
-        label="Nome board",
-        max_length=24,
-        min_length=3
-    )
+def add_board(*args, **kwargs):
+    queryset = User.objects.all()
+
+    class BoardForm(forms.Form):
+        nome = forms.CharField(
+            label="Nome board",
+            max_length=24,
+            min_length=3
+        )
+        proprietario = forms.ModelChoiceField(
+            queryset=queryset,
+            to_field_name='username'
+        )
+        #lo stile di questo non è finito
+        partecipanti = forms.ModelMultipleChoiceField(
+            queryset=queryset,
+            to_field_name='username',
+            label='partecipanti'
+            #widget=forms.CheckboxSelectMultiple() #forse
+        )
+    return BoardForm(*args, **kwargs)
 
 
 class ColumnForm(forms.Form):
@@ -19,14 +35,16 @@ class ColumnForm(forms.Form):
     )
 
 
-class UserForm(forms.Form):
-    username = forms.CharField(
-        label="Username",
-        max_length=24,
-        min_length=3
-    )
+def add_user(*args, **kwargs):
+    queryset = User.objects.all()
 
-
+    class UserForm(forms.Form):
+        user = forms.ModelMultipleChoiceField(
+            queryset=queryset,
+            to_field_name='username',
+            label='partecipanti'
+        )
+    return UserForm(*args, **kwargs)
 
 def filtra_colonne(board, *args, **kwargs):
     queryset = Colonna.objects.filter(board=board)

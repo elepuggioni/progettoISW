@@ -1,4 +1,5 @@
 from django import forms
+from bootstrap_datepicker_plus import DatePickerInput
 from ScrumBoard.models import Colonna
 
 
@@ -42,11 +43,8 @@ def filtra_colonne(board, *args, **kwargs):
             max_length=500,
             required=False
         )
-        data_scadenza = forms.DateField(
-            label="Data scadenza",
-            required=False,
-            widget=forms.SelectDateWidget(empty_label=('anno', 'mese', 'giorno')),
-        )
+        data_scadenza = forms.DateField(label="Scadenza", widget=DatePickerInput(format='%d-%m-%Y'))
+
         story_points = forms.IntegerField(
             label="Story points",
             max_value=20,  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità

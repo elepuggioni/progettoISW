@@ -76,6 +76,7 @@ a:hover {
     background-color: #CAD2C5;
     min-height:400px;
     max-height:400px;
+    overflow-y:auto;
     transition: 0.3s;
 }
 

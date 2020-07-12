@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.models import User
 from django.shortcuts import render
 from django import forms
 from django.db import *
@@ -12,7 +13,7 @@ def hello(request):
 
 
 def dashboard(request):
-    return render(request, "dashboard.html", {'board': Board.objects.all()})
+    return render(request, "dashboard.html", {'board': Board.objects.filter(partecipanti=request.user)})
 
 
 def showboard(request, board_id):
@@ -29,14 +30,14 @@ def crea_board(request):
         if board_form.is_valid():
             new_board = Board(
                 nome=board_form.cleaned_data['nome'],
-                proprietario=board_form.cleaned_data['proprietario'],
+                proprietario=request.user,
             )
             new_board.save()
-            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'])
+            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'], request.user)
 
             return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
     else:
-        board_form = add_board()
+        board_form = add_board(request.user)
     return render(request, "crea_board.html", {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
     #return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
 
@@ -81,6 +82,7 @@ def aggiungi_colonna(request, board_id):
 
 
 def aggiungi_utente(request, board_id):
+    lista_utenti = User.objects.exclude(is_superuser=True).exclude(id=request.user)
     board = Board.objects.get(pk=board_id)
 
     if request.method == "POST":
@@ -88,7 +90,7 @@ def aggiungi_utente(request, board_id):
         if user_form.is_valid():
             # aggiunta utente qui
             board.partecipanti.set(user_form.cleaned_data['user'])
-            return render(request, "showboard.html", {'board': board, 'board_id': board.pk})
+            return render(request, "showboard.html", {'board': board, 'board_id': board.pk}, lista_utenti)
     else:
         user_form = add_user()
     return render(request, "aggiungi_utente.html",
@@ -175,7 +177,7 @@ def cancella_colonna(request, colonna_id):
     """Elimina la colonna indicata"""
     board = Colonna.objects.get(id=colonna_id).board
     Colonna.objects.get(id=colonna_id).delete()
-    return HttpResponseRedirect('board/%d/' % board.id)
+    return HttpResponseRedirect('board/%s/' % str(board.id))
 
 def cancella_card(request, card_id):
     """Elimina la card indicata"""

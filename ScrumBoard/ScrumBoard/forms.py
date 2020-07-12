@@ -4,8 +4,10 @@ from bootstrap_datepicker_plus import DatePickerInput
 from ScrumBoard.models import *
 
 
-def add_board(*args, **kwargs):
-    queryset = User.objects.all()
+def add_board(utente_loggato, *args, **kwargs):
+    # i superutenti o amministratori sono diretti utilizzatori dell'app?
+    # escludo dalla lista anche l'utente che è loggato in questo momento perché è ovvio che ne farà parte
+    queryset = User.objects.exclude(is_superuser=True).exclude(id=utente_loggato.id)
 
     class BoardForm(forms.Form):
         nome = forms.CharField(
@@ -13,10 +15,11 @@ def add_board(*args, **kwargs):
             max_length=24,
             min_length=3
         )
-        proprietario = forms.ModelChoiceField(
+        # il proprietario dovrebbe essere colui che crea la board
+        """proprietario = forms.ModelChoiceField(
             queryset=queryset,
             to_field_name='username'
-        )
+        )"""
         #lo stile di questo non è finito
         partecipanti = forms.ModelMultipleChoiceField(
             queryset=queryset,
@@ -35,8 +38,8 @@ class ColumnForm(forms.Form):
     )
 
 
-def add_user(*args, **kwargs):
-    queryset = User.objects.all()
+def add_user(utente_loggato, *args, **kwargs):
+    queryset = User.objects.exclude(is_superuser=True).exclude(id=utente_loggato.id)
 
     class UserForm(forms.Form):
         user = forms.ModelMultipleChoiceField(

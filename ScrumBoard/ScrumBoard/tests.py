@@ -2,6 +2,8 @@ import unittest
 import datetime
 from django.test import TestCase, Client
 from ScrumBoard.models import *
+from django.contrib.auth.models import User
+from ScrumBoard.forms import add_board
 
 
 class ViewTest(TestCase):
@@ -22,32 +24,18 @@ class ModelTest(TestCase):
         self.client = Client()
 
         # inizializzazione degli utenti
-
-        """"
-        self.utente = User(username="Elena", password="admin")
-        self.utente.save()
-        self.utente2 = User(username="Cristina", password="admin")
-        self.utente2.save()
-
-        self.utente3 = User(username="Francesco", password="admin")
-        self.utente3.save()
-
-        # inizializzazione delle board
-        self.boards[0] = Board(nome='boards[0]', proprietario=self.utente)
-        self.boards[0].save()
-
-        self.boards[1] = Board(nome='boards[1]', proprietario=self.utente2)
-        self.boards[1].save()
-
-        self.boards[2] = Board(nome='boards[2]', proprietario=self.utente3)
-        self.boards[2].save()
-        """
+        self.utenti = []
+        self.utenti.append(User(username="Utente1", password="admin"))
+        self.utenti.append(User(username="Utente2", password="admin"))
+        self.utenti.append(User(username="Utente3", password="admin"))
+        for utente in self.utenti:
+            utente.save()
 
         # inizializzazione delle boards
         self.boards = []
-        self.boards.append(Board(nome='Board1'))
-        self.boards.append(Board(nome='Board2'))
-        self.boards.append(Board(nome='Board3'))
+        self.boards.append(Board(nome='Board1', proprietario=self.utenti[0]))
+        self.boards.append(Board(nome='Board2', proprietario=self.utenti[1]))
+        self.boards.append(Board(nome='Board3', proprietario=self.utenti[2]))
         for board in self.boards:
             board.save()
 
@@ -85,6 +73,15 @@ class ModelTest(TestCase):
         for card in self.cards:
             card.save()
 
+        # aggiunta dei partecipanti
+        self.boards[0].partecipanti.add(self.utenti[1], self.utenti[2])
+
+    def testFindUtenti(self):
+        # test sugli utenti
+        self.assertEqual(User.objects.all().count(), len(self.utenti))
+        for utente in self.utenti:
+            self.assertIn(utente, User.objects.all())
+
     def testFindBoards(self):
         # test sulle board
         self.assertEqual(len(Board.objects.all()), len(self.boards))
@@ -117,6 +114,10 @@ class ModelTest(TestCase):
         #self.assertEqual(len(Card.objects.all().filter(story_points="5")), 2)
         self.assertIn(self.cards[0], self.colonne[0].card_set.all())
         self.assertIn(self.cards[1], self.colonne[1].card_set.all())
+
+    def testPartecipanti(self):
+        self.assertIn(self.utenti[1], User.objects.filter(partecipanti=self.boards[0]))
+        self.assertIn(self.utenti[2], User.objects.filter(partecipanti=self.boards[0]))
 
     def testNumeroColonne(self):
         self.assertEqual(self.boards[0].num_colonne(), self.contaColonne(self.boards[0]))
@@ -183,18 +184,29 @@ class ModelTest(TestCase):
 
 
     def testDashboardView(self):
+        #self.assertTrue(self.client.login(username=self.utenti[0].username, password='admin'))
+        self.client.force_login(self.utenti[0])
         response = self.client.get('/dashboard/')
         for board in self.boards:
-            self.assertContains(response, board.nome)
+            if(board.partecipanti == self.utenti[0]):
+                self.assertContains(response, board.nome)
 
     def testShowBoard(self):
+        #self.assertTrue(self.client.login(username='Utente1', password='admin'))
+
         response = self.client.get(self.boards[0].get_absolute_url())
         for colonna in Colonna.objects.filter(board=self.boards[0]):
             self.assertContains(response, colonna.nome)
             for card in Card.objects.filter(colonna=colonna):
                 self.assertContains(response, card.nome)
 
+    """def testCreaBoardViewGet(self):
+        response = self.client.get('/dashboard/crea_board')
+        self.assertIsInstance(response.context['form'], BoardForm)
 
+    def testCreaBoardPost(self):
+        response = self.client.post('/dashboard/crea_board', {'nome':'testpipo'})
+        print(response.context['nome'])"""
 
 if __name__ == '__main__':
     unittest.main()

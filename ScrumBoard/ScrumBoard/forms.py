@@ -49,8 +49,9 @@ def add_user(utente_loggato, *args, **kwargs):
         )
     return UserForm(*args, **kwargs)
 
-def filtra_colonne(board, *args, **kwargs):
+def crea_card_form(board, *args, **kwargs):
     queryset = Colonna.objects.filter(board=board)
+    utenti = User.objects.exclude(is_superuser=True)
 
     class CardForm(forms.Form):
         nome = forms.CharField(
@@ -75,5 +76,10 @@ def filtra_colonne(board, *args, **kwargs):
         colonna = forms.ModelChoiceField(
             queryset=queryset,
             to_field_name='nome'
+        )
+        membri = forms.ModelMultipleChoiceField(
+            queryset=utenti,
+            to_field_name='username',
+            label='membri'
         )
     return CardForm(*args, **kwargs)

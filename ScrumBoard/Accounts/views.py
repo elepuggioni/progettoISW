@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from ScrumBoard import *
 from django.contrib.auth.forms import UserCreationForm
 
@@ -18,7 +19,7 @@ def registerPage(request):
         if form.is_valid():
             form.save()
             user = form.cleaned_data.get('username')
-            messages.success(request, 'L\'account di ' + user + 'è stato creato con successo!' )
+            messages.success(request, 'L\'account di ' + user + ' è stato creato con successo!' )
             return redirect('login')
 
     context = {'form': form}
@@ -41,7 +42,7 @@ def loginPage(request):
 
 def logoutUser(request):
     logout(request)
-    return redirect('login')
+    return HttpResponseRedirect(reverse('login'))
 
 def home(request):
     return render(request, 'login.html')

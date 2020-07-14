@@ -72,8 +72,9 @@ class Board(models.Model):
             return reverse('show-board', args=[str(self.id)])
 
     def get_ultima_colonna(self):
-        colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
-        return colonne[-1]
+        #colonne = list(Colonna.objects.filter(board=self).order_by('pk'))
+        #return colonne[-1]
+        return Colonna.objects.filter(board=self).last()
 
     def __str__(self):
         return self.nome
@@ -157,7 +158,7 @@ class Card(models.Model):
     data_scadenza = models.DateField(null=True)
     story_points = models.IntegerField(null=False, blank=True, default=0)
     colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
-    #users = models.ManyToManyField(User, related_name='contributors')
+    membri = models.ManyToManyField(User, related_name='membri')
 
     """
     def aggiungi_utente(self, utente): #utente tipo User

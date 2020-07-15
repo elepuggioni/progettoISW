@@ -23,7 +23,7 @@ def home(request):
 
 @login_required(login_url='/login')
 def dashboard(request):
-    return render(request, "dashboard.html", {'board': Board.objects.filter(partecipanti=request.user)})
+    return render(request, "dashboard.html", {'board': Board.objects.filter(proprietario=request.user).union(Board.objects.filter(partecipanti=request.user))})
 
 
 @login_required(login_url='/login')
@@ -55,7 +55,8 @@ def crea_board(request):
             new_board.save()
             new_board.partecipanti.set(board_form.cleaned_data['partecipanti'])
 
-            return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
+            redirect_to = Board.objects.get(pk=new_board.pk)
+            return redirect(redirect_to)
     else:
         board_form = add_board(request.user)
     return render(request, "crea_board.html",
@@ -78,8 +79,9 @@ def aggiungi_card(request, board_id):
             )
             new_card.save()
             new_card.membri.set(card_form.cleaned_data['membri'])
-            return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
 
+            redirect_to = Board.objects.get(pk=board_id)
+            return redirect(redirect_to)
     else:
         card_form = crea_card_form(board=board_id)
     return render(request, "aggiungi_card.html",
@@ -119,7 +121,8 @@ def aggiungi_utente(request, board_id):
         if user_form.is_valid():
             # aggiunta utente qui
             board.partecipanti.set(user_form.cleaned_data['user'])
-            return render(request, "showboard.html", {'board': board, 'board_id': board.pk}, lista_utenti)
+            redirect_to = Board.objects.get(pk=board_id)
+            return redirect(redirect_to)
     else:
         user_form = add_user(request.user)
     return render(request, "aggiungi_utente.html",

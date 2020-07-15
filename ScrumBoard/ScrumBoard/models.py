@@ -79,6 +79,8 @@ class Board(models.Model):
     def __str__(self):
         return self.nome
 
+    def test(self):
+        return User.objects.get(pk=self.proprietario.pk).username
 
 class Colonna(models.Model):
     """La rappresentazione di una colonna"""
@@ -190,11 +192,12 @@ class Card(models.Model):
             return False
         return date.today() > self.data_scadenza
 
+    def get_users(self):
+        return self.membri.all()
 
-    #questa mi serve per finire l'html di showboard va deciso come implementarlo
-    #def get_users(self):
-        #return User.objects.all().filter(card=self)
 
+    def get_absolute_url(self):
+        return reverse('show-card', args=[str(self.id)])
 
     def __str__(self):
         return self.nome

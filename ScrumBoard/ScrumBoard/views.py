@@ -26,16 +26,24 @@ def showboard(request, board_id):
     return render(request, "showboard.html", {'board': board, 'board_id': board_id})
 
 @login_required(login_url='/login')
+def showcard(request, card_id):
+    try:
+        card = Card.objects.get(pk=card_id)
+    except Card.DoesNotExist:
+        card = None
+    return render(request, "showcard.html", {'card': card, 'card_id': card_id})
+
+@login_required(login_url='/login')
 def crea_board(request):
     if request.method == "POST":
-        board_form = add_board(request.POST)
+        board_form = add_board(request.user, request.POST)
         if board_form.is_valid():
             new_board = Board(
                 nome=board_form.cleaned_data['nome'],
                 proprietario=request.user,
             )
             new_board.save()
-            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'], request.user)
+            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'])
 
             return render(request, "showboard.html", {'board': new_board, 'board_id': new_board.pk})
     else:
@@ -90,7 +98,7 @@ def aggiungi_utente(request, board_id):
     board = Board.objects.get(pk=board_id)
 
     if request.method == "POST":
-        user_form = add_user(request.POST)
+        user_form = add_user(request.user, request.POST)
         if user_form.is_valid():
             # aggiunta utente qui
             board.partecipanti.set(user_form.cleaned_data['user'])

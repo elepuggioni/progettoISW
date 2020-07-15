@@ -26,6 +26,9 @@ def registerPage(request):
     return render(request, 'register.html', context)
 
 def loginPage(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')    # se già loggato si va alla dashboard direttamente
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')

@@ -28,13 +28,15 @@
                 <div class="col-9">
                     <a href="/dashboard" class="h1 text-header">scrumboard</a>
                 </div>
-                <!--da mettere: if utente loggato-->
+                <!-- if utente loggato -->
+                {% if user.is_authenticated %}
                 <div class="col-2">
                     <p class="text-center my-auto text-white">Benvenuto, {{user.username}}</p>
                 </div>
                 <div class="col">
                      <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
                 </div>
+                {% endif %}
                 <!--else
                 <div class="col">
                      <a href="{% url 'register' %}" class="btn btn-outline-light">Registrati</a>

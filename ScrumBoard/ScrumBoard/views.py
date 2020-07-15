@@ -90,7 +90,10 @@ def aggiungi_colonna(request, board_id):
             )
             new_column.save()
 
-            return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
+            redirect_to = Board.objects.get(pk=board_id)
+            return redirect(redirect_to)
+            # render commentato per il momento
+            #return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
     else:
         column_form = ColumnForm()
     return render(request, "aggiungi_colonna.html",

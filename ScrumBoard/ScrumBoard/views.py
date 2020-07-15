@@ -2,7 +2,7 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django import forms
 from django.db import *
 from ScrumBoard.forms import *
@@ -12,6 +12,12 @@ from django.contrib.auth.decorators import login_required
 
 def hello(request):
     return HttpResponse("Hello world")
+
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return redirect('login')
 
 @login_required(login_url='/login')
 def dashboard(request):

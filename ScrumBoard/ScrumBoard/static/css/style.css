@@ -246,7 +246,7 @@ a:hover {
     text-align:center;
 
 }
-/*
+
 .overlay {
   height: 0%;
   width: 100%;
@@ -280,22 +280,23 @@ a:hover {
     padding-top:0px;
 }
 
-.closebtn{
-    font-size:30px;
-}
-
-.closebtn:hover {
-    color: #e76f51;
-}
-
-.overlay-title{
+.cardinfo-title{
     font-weight:bold;
     font-size:24px;
     text-transform: uppercase;
 }
-*/
 
 .form_base{
-    max-width:450px;
+    max-width:500px;
     margin-bottom:16px;
+}
+
+.descrizione-box{
+    min-height:10px;
+    max-height:500px;
+    background-color:#fff;
+    overflow-y:auto;
+    font-size:14px;
+    background-color:#e6e6e6;
+
 }

@@ -7,7 +7,7 @@ from ScrumBoard.models import *
 def add_board(utente_loggato, *args, **kwargs):
     # i superutenti o amministratori sono diretti utilizzatori dell'app?
     # escludo dalla lista anche l'utente che è loggato in questo momento perché è ovvio che ne farà parte
-    queryset = User.objects.exclude(is_superuser=True).exclude(id=utente_loggato.id)
+    queryset = User.objects.exclude(id=utente_loggato.id)
 
     class BoardForm(forms.Form):
         nome = forms.CharField(
@@ -24,7 +24,8 @@ def add_board(utente_loggato, *args, **kwargs):
         partecipanti = forms.ModelMultipleChoiceField(
             queryset=queryset,
             to_field_name='username',
-            label='partecipanti'
+            label='partecipanti',
+            required=False
             #widget=forms.CheckboxSelectMultiple() #forse
         )
     return BoardForm(*args, **kwargs)
@@ -39,7 +40,7 @@ class ColumnForm(forms.Form):
 
 
 def add_user(utente_loggato, *args, **kwargs):
-    queryset = User.objects.exclude(is_superuser=True).exclude(id=utente_loggato.id)
+    queryset = User.objects.exclude(id=utente_loggato.id)
 
     class UserForm(forms.Form):
         user = forms.ModelMultipleChoiceField(
@@ -51,7 +52,7 @@ def add_user(utente_loggato, *args, **kwargs):
 
 def crea_card_form(board, *args, **kwargs):
     queryset = Colonna.objects.filter(board=board)
-    utenti = User.objects.exclude(is_superuser=True)
+    utenti = User.objects.all()
 
     class CardForm(forms.Form):
         nome = forms.CharField(
@@ -65,14 +66,17 @@ def crea_card_form(board, *args, **kwargs):
             max_length=500,
             required=False
         )
-        data_scadenza = forms.DateField(label="Scadenza", widget=DatePickerInput(format='%d-%m-%Y'))
-
+        data_scadenza = forms.DateField(label="Scadenza",
+                                        widget=DatePickerInput(format='%d-%m-%Y'),
+                                        required=False
+                                        )
         story_points = forms.IntegerField(
             label="Story points",
             max_value=20,  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
             required=False,
             initial=0
         )
+        #va messo qualcosa per il quale se non ci sono ancora colonne ti porta a crea colonna
         colonna = forms.ModelChoiceField(
             queryset=queryset,
             to_field_name='nome'
@@ -80,6 +84,7 @@ def crea_card_form(board, *args, **kwargs):
         membri = forms.ModelMultipleChoiceField(
             queryset=utenti,
             to_field_name='username',
-            label='membri'
+            label='membri',
+            required=False
         )
     return CardForm(*args, **kwargs)

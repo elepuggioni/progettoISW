@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Card Detail{% endblock %}
+
+{% block content %}
+{% if card %}
+
+<div class="container" style="max-width:750px;margin-bottom:16px;">
+    <div class="row p-0 m-0">
+        <div class="col-12 cardinfo-title mt-1 mb-0 pb-0 d-flex align-items-center">{{ card.nome }}
+        </div>
+
+         <div class="col-12 mt-1 py-0">
+         colonna: <span style="font-size:16px"><b>{{ card.colonna.nome }}</b></span>
+             <hr style="padding:0px; margin-top:6px; margin-bottom:6px;">
+         </div>
+    </div>
+    <div class="container my-3">
+        <b>Membri:</b>
+        <div class="row p-0 m-0">
+            {% for user in card.get_users %}
+            <div class="col-3 burndown_row">{{ user.username }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row p-0 m-0">
+        <div class="col-12 my-1"><b>Data di creazione:</b> {{ card.data_creazione }}</div>
+        <div class="col-12 my-1"><b>Data di scadenza:</b> {{ card.data_scadenza }}</div>
+        <div class="col-12 my-1"><b>Story points:</b> {{ card.story_points }}</div>
+    </div>
+
+    <div class="container my-3">
+        <b>Descrizione:</b>
+        <div class="col-12 p-0 m-0"></div>
+        <div class="col-12 scrollbar-info descrizione-box rounded p-1 my-1">{{ card.descrizione }}</div>
+    </div>
+
+    <form>
+        <div class="col-12"><a href="{{ card.colonna.board.get_absolute_url }}" class="col-3 btn btn-info">Back...</a></div>
+    </form>
+
+</div>
+
+{% else %}
+    <p>No Card Found for id: {{ card_id }}</p>
+    {% endif %}
+{% endblock %}

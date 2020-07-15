@@ -17,47 +17,6 @@
     </div>
 
 
-
-<!--
-    <div id="add_user" class="overlay">
-      <div class="overlay-content">
-                <div class="overlay-window">
-                    <div class="row p-0 m-0">
-                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi utente</div>
-                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
-                            <a href="javascript:void(0)" class="closebtn" onclick="close_user()">&times;</a>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-
-    <div id="add_column" class="overlay">
-      <div class="overlay-content">
-                <div class="overlay-window">
-                    <div class="row p-0 m-0">
-                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi colonna</div>
-                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
-                            <a href="javascript:void(0)" class="closebtn" onclick="close_column()">&times;</a>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-
-    <div id="add_card" class="overlay">
-      <div class="overlay-content">
-                <div class="overlay-window">
-                    <div class="row p-0 m-0">
-                        <div class="col-11 overlay-title m-0 p-0 d-flex align-items-center">Aggiungi card</div>
-                        <div class="col-1 pr-2 m-0 d-flex justify-content-end">
-                            <a href="javascript:void(0)" class="closebtn" onclick="close_card()">&times;</a>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
--->
     <hr>
     <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1 h-100">
         {% if board.get_colonne %}
@@ -75,14 +34,16 @@
                         <div class="card-body text-secondary p-0 m-0">
                             <div class="container m-0 p-0">
                                 <div class="row m-0 px-2 pt-1 pb-0">
-                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start"><a href="#">{{ card.nome }}</a></div>
+                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
+                                        <a href="{{ card.get_absolute_url }}" style="max-width:95%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
+                                    </div>
                                     <div class="col-2 edit d-flex justify-content-end p-0 m-0">
                                         <a href="#" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a></div>
                                     <hr>
                                 </div>
                             </div>
                             <div class="card-hidden">
-                                <div class="card-description mx-1 my-0" ><hr>{{ card.descrizione }}<hr></div>
+                                <div class="card-description mx-1 my-0"><hr>{{ card.descrizione }}<hr></div>
                                 <div class="card-details mx-1 my-0">
                                     <div><b>Story points: </b>{{ card.story_points }}</div>
                                     <div><b>Added: </b>{{ card.data_creazione }}</div>
@@ -93,14 +54,21 @@
                             <div class="container mb-2 mr-1 ml-1 p-0 ">
                                 <div class="row m-0 p-0 justify-content-start">
                                     <!-- for user in card.get_users ; break row after 6 users -->
-                                    <a href="#" class="col-2 m-0 p-0 user-initials ">EP</a>
-                                    <a href="#" class="col-2 m-0 p-0 user-initials">CP</a>
+                                    {% for user in card.get_users %}
+                                    <a href=" " title="{{ user.username }}" class="col-2 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="w-100"></div>
+
+                <div id="open_card" class="overlay" data-card="card">
+                  <div class="overlay-content">
+
+                    </div>
+                </div>
 
                 {% endfor %}
             </div>
@@ -111,34 +79,6 @@
         <h5 class="d-flex justify-content-center align-content-center w-100 my-auto">La board è ancora vuota :(</h5>
         {% endif %}
     </div>
-<!--
-        <script>
-        function add_user() {
-          document.getElementById("add_user").style.height = "100%";
-        }
-
-        function close_user() {
-          document.getElementById("add_user").style.height = "0%";
-        }
-
-        function add_column() {
-          document.getElementById("add_column").style.height = "100%";
-        }
-
-        function close_column() {
-          document.getElementById("add_column").style.height = "0%";
-        }
-
-        function add_card() {
-          document.getElementById("add_card").style.height = "100%";
-        }
-
-        function close_card() {
-          document.getElementById("add_card").style.height = "0%";
-        }
-
-        </script>
--->
     {% else %}
     <p>No Board Found for id: {{ board_id }}</p>
     {% endif %}

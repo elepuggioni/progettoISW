@@ -86,10 +86,17 @@ a:hover {
 .board-column:hover {
     background-color: #52796F;
     border-color: #CAD2C5!important;
+    color: #CAD2C5!important;
 }
 
 .board-column:hover .col-title {
     color:#CAD2C5;
+}
+
+.board-card {
+    width: 13vw;
+    word-wrap: break-word;
+    text-align: center;
 }
 
 .col_title{

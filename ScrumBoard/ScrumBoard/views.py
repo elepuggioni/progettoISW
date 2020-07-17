@@ -27,8 +27,9 @@ def showboard(request, board_id):
     is_authorized = False
     try:
         board = Board.objects.get(pk=board_id)
-        auth_users = Board.objects.filter(proprietario=request.user.id).union(  # utilizzato per raccogliere la lista di utenti
-            Board.objects.filter(partecipanti=request.user.id))                 # autorizzati ad accedere alla board
+        auth_users = Board.objects.filter(proprietario=request.user.id).union(
+            # utilizzato per raccogliere la lista di utenti
+            Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board
 
         if board in auth_users:
             is_authorized = True
@@ -174,15 +175,21 @@ def modifica_colonna(request, colonna_id):
 
 @login_required(login_url='/login')
 def modifica_card(request, card_id):
-    card = Card.objects.get(id=card_id)
-    board_id = card.colonna.board.id
-
     is_authorized = False
+
+    try:        # try catch per evitare di avere una pagina di errore quando la card non esiste nel db
+        card = Card.objects.get(id=card_id)
+        board_id = card.colonna.board.id
+    except Card.DoesNotExist:
+        card = None
+        return render(request, "modifica_card.html", {"card": card, "is_authorized": is_authorized})
+
     board = Board.objects.get(pk=board_id)
     auth_users = Board.objects.filter(proprietario=request.user.id).union( # utilizzato per raccogliere la lista di utenti
-        Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board e quindi alla card da modificare
+        Board.objects.filter( # autorizzati ad accedere alla board e quindi alla card da modificare
+            partecipanti=request.user.id))
 
-    if board in auth_users:     # controllo se presente
+    if board in auth_users:  # controllo se presente
         is_authorized = True
 
     if request.method == "POST":
@@ -209,7 +216,7 @@ def modifica_card(request, card_id):
                                                          'membri': card.membri.all()
                                                          })
         # card_form = filtra_colonne(board=board_id,data=card.__dict__)
-    return render(request, "modifica_card.html", {"form": card_form, "is_authorized": is_authorized})
+    return render(request, "modifica_card.html", {"form": card_form, "card": card, "is_authorized": is_authorized})
 
 
 @login_required(login_url='/login')

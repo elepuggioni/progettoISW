@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block title %}Modifica card{% endblock %}
-{% block content %}{% if is_authorized %}
+{% block content %}
+    {% if card and is_authorized %}
 <div class="container form_base">
   <form method="post" id="modifica_card_form" novalidate>
     {% csrf_token %}

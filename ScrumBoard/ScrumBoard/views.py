@@ -177,6 +177,14 @@ def modifica_card(request, card_id):
     card = Card.objects.get(id=card_id)
     board_id = card.colonna.board.id
 
+    is_authorized = False
+    board = Board.objects.get(pk=board_id)
+    auth_users = Board.objects.filter(proprietario=request.user.id).union( # utilizzato per raccogliere la lista di utenti
+        Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board e quindi alla card da modificare
+
+    if board in auth_users:     # controllo se presente
+        is_authorized = True
+
     if request.method == "POST":
         card_form = crea_card_form(board=board_id, data=request.POST)
 
@@ -201,7 +209,7 @@ def modifica_card(request, card_id):
                                                          'membri': card.membri.all()
                                                          })
         # card_form = filtra_colonne(board=board_id,data=card.__dict__)
-    return render(request, "modifica_card.html", {"form": card_form})
+    return render(request, "modifica_card.html", {"form": card_form, "is_authorized": is_authorized})
 
 
 @login_required(login_url='/login')

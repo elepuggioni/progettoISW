@@ -2,11 +2,15 @@
 
 {% block title %}Modifica card{% endblock %}
 {% block content %}
+    {% if is_authorized %}
 <div class="container form_base">
   <form method="post" id="modifica_card_form" novalidate>
     {% csrf_token %}
     {% include 'form_base.html' with form=form %}
     <button type="submit" class="col-12 btn btn-info">Submit</button>
   </form>
+        {% else %}
+    <p>You may not have sufficient permissions to access this page </p>
+    {% endif %}
 {% endblock %}
 </div>

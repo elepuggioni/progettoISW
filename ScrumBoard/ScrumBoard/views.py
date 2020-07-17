@@ -1,10 +1,5 @@
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django import forms
-from django.db import *
 from ScrumBoard.forms import *
 from ScrumBoard.models import *
 from django.contrib.auth.decorators import login_required
@@ -43,6 +38,7 @@ def showcard(request, card_id):
         card = None
     return render(request, "showcard.html", {'card': card, 'card_id': card_id})
 
+
 @login_required(login_url='/login')
 def crea_board(request):
     if request.method == "POST":
@@ -53,15 +49,13 @@ def crea_board(request):
                 proprietario=request.user,
             )
             new_board.save()
-            new_board.partecipanti.set(board_form.cleaned_data['partecipanti'])
+            new_board.partecipanti.set(board_form.cleaned_data['membri'])
 
             redirect_to = Board.objects.get(pk=new_board.pk)
             return redirect(redirect_to)
     else:
         board_form = add_board(request.user)
-    return render(request, "crea_board.html",
-                  {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero
-    # return render(request, "form_tests/creaBoardTest.html", {'form':board_form})
+    return render(request, "crea_board.html", {"form": board_form})
 
 
 @login_required(login_url='/login')
@@ -84,9 +78,7 @@ def aggiungi_card(request, board_id):
             return redirect(redirect_to)
     else:
         card_form = crea_card_form(board=board_id)
-    return render(request, "aggiungi_card.html",
-                  {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero
-    # return render(request, "form_tests/aggiungi_card_test.html", {'form':card_form})
+    return render(request, "aggiungi_card.html", {"form": card_form})
 
 
 @login_required(login_url='/login')
@@ -117,16 +109,15 @@ def aggiungi_utente(request, board_id):
     board = Board.objects.get(pk=board_id)
 
     if request.method == "POST":
-        user_form = add_user(request.user, request.POST)
+        user_form = add_user(request.user, data=request.POST)
         if user_form.is_valid():
-            # aggiunta utente qui
-            board.partecipanti.set(user_form.cleaned_data['user'])
+            board.partecipanti.set(user_form.cleaned_data['membri'])
+
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
     else:
-        user_form = add_user(request.user)
-    return render(request, "aggiungi_utente.html",
-                  {"form": user_form})  # aggiungi_utente è un placeholder in attesa di quello vero
+        user_form = add_user(request.user, data={'membri': board.partecipanti.all()})
+    return render(request, "aggiungi_utente.html", {"form": user_form})
 
 
 @login_required(login_url='/login')
@@ -144,7 +135,7 @@ def modifica_board(request, board_id):
             board.nome = board_form.cleaned_data('nome')
             board.proprietario = board_form.cleaned_data['proprietario']
             board.save()
-            board.partecipanti.set(board_form.cleaned_data['partecipanti'])
+            board.partecipanti.set(board_form.cleaned_data['membri'])
             return HttpResponse("Board modificata")
     else:
         board_form = add_board(data={'nome': board.nome})
@@ -176,31 +167,32 @@ def modifica_colonna(request, colonna_id):
 def modifica_card(request, card_id):
     card = Card.objects.get(id=card_id)
     board_id = card.colonna.board.id
+
     if request.method == "POST":
         card_form = crea_card_form(board=board_id, data=request.POST)
+
         if card_form.is_valid():
-            card.nome = card_form.cleaned_data['nome'],
-            card.descrizione = card_form.cleaned_data['descrizione'],
-            card.data_scadenza = card_form.cleaned_data[
-                                     'data_scadenza'],  # la data di inizio dovrebbe essere automatica
-            card.story_points = card_form.cleaned_data['story_points'],
+            card.nome = card_form.cleaned_data['nome']
+            card.descrizione = card_form.cleaned_data['descrizione']
+            card.data_scadenza = card_form.cleaned_data['data_scadenza']
             card.colonna = card_form.cleaned_data['colonna']
+            card.story_points = card_form.cleaned_data['story_points']
+
             card.save()
             card.membri.set(card_form.cleaned_data['membri'])
-            return HttpResponse("Card aggiunta")
+
+            redirect_to = Board.objects.get(pk=board_id)
+            return redirect(redirect_to)
     else:
-        card_form = crea_card_form(board=board_id,
-                                   data={'nome': card.nome,
-                                         'descrizione': card.descrizione,
-                                         'data_scadenza': card.data_scadenza,
-                                         'story_points': card.story_points,
-                                         'colonna': card.colonna
-                                         })
-        """card_form = filtra_colonne(board=board_id,
-                                   data=card.__dict__)"""
-    """return render(request, "aggiungi_card.html",
-                  {"form": card_form})  # aggiungi_card.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/modifica_card_test.html", {'form': card_form})
+        card_form = crea_card_form(board=board_id, data={'nome': card.nome,
+                                                            'descrizione': card.descrizione,
+                                                            'data_scadenza': card.data_scadenza,
+                                                            'story_points': card.story_points,
+                                                            'colonna': card.colonna,
+                                                            'membri': card.membri.all()
+                                                         })
+        #card_form = filtra_colonne(board=board_id,data=card.__dict__)
+    return render(request, "modifica_card.html", {"form": card_form})
 
 
 @login_required(login_url='/login')

@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.models import User
 from bootstrap_datepicker_plus import DatePickerInput
 from ScrumBoard.models import *
 
@@ -20,13 +19,13 @@ def add_board(utente_loggato, *args, **kwargs):
             queryset=queryset,
             to_field_name='username'
         )"""
-        #lo stile di questo non è finito
-        partecipanti = forms.ModelMultipleChoiceField(
+
+        membri = forms.ModelMultipleChoiceField(
             queryset=queryset,
             to_field_name='username',
-            label='partecipanti',
-            required=False
-            #widget=forms.CheckboxSelectMultiple() #forse
+            label='membri',
+            required=False,
+            widget=forms.CheckboxSelectMultiple()
         )
     return BoardForm(*args, **kwargs)
 
@@ -43,12 +42,15 @@ def add_user(utente_loggato, *args, **kwargs):
     queryset = User.objects.exclude(id=utente_loggato.id)
 
     class UserForm(forms.Form):
-        user = forms.ModelMultipleChoiceField(
+        membri = forms.ModelMultipleChoiceField(
             queryset=queryset,
             to_field_name='username',
-            label='partecipanti'
+            label='membri',
+            required=False,
+            widget=forms.CheckboxSelectMultiple()
         )
     return UserForm(*args, **kwargs)
+
 
 def crea_card_form(board, *args, **kwargs):
     queryset = Colonna.objects.filter(board=board)
@@ -85,6 +87,7 @@ def crea_card_form(board, *args, **kwargs):
             queryset=utenti,
             to_field_name='username',
             label='membri',
-            required=False
+            required=False,
+            widget=forms.CheckboxSelectMultiple()
         )
     return CardForm(*args, **kwargs)

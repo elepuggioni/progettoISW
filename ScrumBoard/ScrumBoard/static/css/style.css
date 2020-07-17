@@ -275,5 +275,12 @@ a:hover {
     overflow-y:auto;
     font-size:14px;
     background-color:#e6e6e6;
+}
 
+.checkbox{
+    background-color:#CAD2C5;
+}
+
+input[type=checkbox], input[type=radio]{
+    transform: scale(2);
 }

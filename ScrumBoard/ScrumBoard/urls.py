@@ -36,6 +36,7 @@ urlpatterns = [
     path(r'board/<board_id>/aggiungi_utente', views.aggiungi_utente, name='add-user'),
     path(r'burndown/<board_id>', views.burndown, name='burndown'),
     path(r'card/<card_id>/', views.showcard, name='show-card'),
+    path(r'modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
     path('', include('Accounts.urls')),
 
     #test per la visualizzazione dei forms

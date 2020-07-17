@@ -1,42 +1,63 @@
 {% load bootstrap4 %}       {# import bootstrap4/bootstrap3 #}
-{% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
-{{ form.media }}            {# Adds date-picker required JS and CSS #}
-{% load widget_tweaks %}
+    {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
+    {{ form.media }}            {# Adds date-picker required JS and CSS #}
+    {% load widget_tweaks %}
 
-{% for hidden_field in form.hidden_fields %}
-  {{ hidden_field }}
-{% endfor %}
-
-{% if form.non_field_errors %}
-  <div class="alert alert-danger" role="alert">
-    {% for error in form.non_field_errors %}
-      {{ error }}
+    {% for hidden_field in form.hidden_fields %}
+    {{ hidden_field }}
     {% endfor %}
-  </div>
-{% endif %}
 
-{% for field in form.visible_fields %}
-  <div class="form-group">
-    {{ field.label_tag }}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% for field in form.visible_fields %}
+    {% if field.label != 'membri' %}
+    <div class="form-group">
+      {{ field.label_tag }}
 
-    {% if form.is_bound %}
-      {% if field.errors %}
-        {% render_field field class="form-control is-invalid" %}
-        {% for error in field.errors %}
+      {% if form.is_bound %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" %}
+          {% for error in field.errors %}
           <div class="invalid-feedback">
             {{ error }}
           </div>
-        {% endfor %}
+          {% endfor %}
+        {% else %}
+
+          {% render_field field class="form-control is-valid" %}
+
+        {% endif %}
       {% else %}
-        {% render_field field class="form-control is-valid" %}
+        {% render_field field class="form-control" %}
       {% endif %}
+
+      {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+      {% endif %}
+    </div>
+
     {% else %}
-      {% render_field field class="form-control" %}
+       <div class="form-group checkboxes">
+         {{ field.label_tag }}
+        <div class="container">
+          <div class="row">
+            {% for membro in form.membri %}
+              <div class="col-3 checkbox btn m-1 pt-2 d-flex justify-content-center">
+                <span class="checkbox-box mr-1">
+                  {{ membro.tag }}  <!-- Generates the checkbox for the field -->
+                </span>
+                <span class="checkbox-label mx-2" style="font-size:16px;">
+                  {{ membro.choice_label }} <!-- Generates the named label of the field -->
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+       </div>
     {% endif %}
-
-    {% if field.help_text %}
-      <small class="form-text text-muted">{{ field.help_text }}</small>
-    {% endif %}
-  </div>
-
-{% endfor %}
+    {% endfor %}

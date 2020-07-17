@@ -3,7 +3,7 @@
 {% block title %}Board Detail{% endblock %}
 
 {% block content %}
-      {% if board %}
+      {% if board and is_authorized %}
     <div class="container m-0 p-0">
         <div class="row m-0 p-0">
             <h3 class="col-md-4">{{ board.nome }}</h3>
@@ -15,7 +15,6 @@
             </div>
         </div>
     </div>
-
 
     <hr>
     <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1 h-100">
@@ -80,6 +79,6 @@
         {% endif %}
     </div>
     {% else %}
-    <p>No Board Found for id: {{ board_id }}</p>
+    <p>No Board Found for id: {{ board_id }} - you may not have sufficient permissions to access this page </p>
     {% endif %}
 {% endblock %}

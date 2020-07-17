@@ -11,7 +11,6 @@ class ViewTest(TestCase):
     def setUp(self):
         self.client = Client()
 
-
     def testHelloWorldView(self):
         response = self.client.get('/hello/')
         self.assertContains(response, "Hello world")
@@ -48,18 +47,18 @@ class ModelTest(TestCase):
         for colonna in self.colonne:
             colonna.save()
 
-        #inizializzazione delle carte
+        # inizializzazione delle carte
         self.cards = []
         self.cards.append(Card(nome="Prova",
-                        descrizione="Carta di prova",
-                        story_points="5",
-                        data_scadenza=datetime.date.today() - datetime.timedelta(days=3),
-                        colonna=self.colonne[0]))
+                               descrizione="Carta di prova",
+                               story_points="5",
+                               data_scadenza=datetime.date.today() - datetime.timedelta(days=3),
+                               colonna=self.colonne[0]))
         self.cards.append(Card(nome="Prova2",
-                        descrizione="Carta di prova2",
-                        story_points="3",
-                        data_scadenza=datetime.date.today() + datetime.timedelta(days=3),
-                        colonna=self.colonne[1]))
+                               descrizione="Carta di prova2",
+                               story_points="3",
+                               data_scadenza=datetime.date.today() + datetime.timedelta(days=3),
+                               colonna=self.colonne[1]))
         self.cards.append(Card(nome="Prova3",
                                descrizione="Carta di prova3",
                                story_points="5",
@@ -87,7 +86,7 @@ class ModelTest(TestCase):
         self.assertEqual(len(Board.objects.all()), len(self.boards))
         for board in self.boards:
             self.assertIn(board, Board.objects.all())
-        #self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
+        # self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
 
     def testFindColonne(self):
         # test sulle colonne
@@ -106,12 +105,12 @@ class ModelTest(TestCase):
 
         self.assertEqual(Card.objects.get(nome='Prova'), self.cards[0])
         self.assertEqual(Card.objects.get(nome='Prova2'), self.cards[1])
-        #self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 3)
-        #self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
-        #self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova3")), 1)
-        #self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 3)
-        #self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
-        #self.assertEqual(len(Card.objects.all().filter(story_points="5")), 2)
+        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 3)
+        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
+        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova3")), 1)
+        # self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 3)
+        # self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
+        # self.assertEqual(len(Card.objects.all().filter(story_points="5")), 2)
         self.assertIn(self.cards[0], self.colonne[0].card_set.all())
         self.assertIn(self.cards[1], self.colonne[1].card_set.all())
 
@@ -182,17 +181,16 @@ class ModelTest(TestCase):
     def contaStorypointsUsati(self, board):
         return self.contaStorypoints(board.get_ultima_colonna())
 
-
     def testDashboardView(self):
-        #self.assertTrue(self.client.login(username=self.utenti[0].username, password='admin'))
+        # self.assertTrue(self.client.login(username=self.utenti[0].username, password='admin'))
         self.client.force_login(self.utenti[0])
         response = self.client.get('/dashboard/')
         for board in self.boards:
-            if(board.partecipanti == self.utenti[0]):
+            if (board.partecipanti == self.utenti[0]):
                 self.assertContains(response, board.nome)
 
     def testShowBoard(self):
-        #self.assertTrue(self.client.login(username='Utente1', password='admin'))
+        # self.assertTrue(self.client.login(username='Utente1', password='admin'))
 
         response = self.client.get(self.boards[0].get_absolute_url())
         for colonna in Colonna.objects.filter(board=self.boards[0]):
@@ -202,11 +200,12 @@ class ModelTest(TestCase):
 
     """def testCreaBoardViewGet(self):
         response = self.client.get('/dashboard/crea_board')
-        self.assertIsInstance(response.context['form'], BoardForm)
+        self.assertIsInstance(response.context['fo  rm'], BoardForm)
 
     def testCreaBoardPost(self):
         response = self.client.post('/dashboard/crea_board', {'nome':'testpipo'})
         print(response.context['nome'])"""
+
 
 if __name__ == '__main__':
     unittest.main()

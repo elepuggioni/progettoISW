@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block title %}Modifica card{% endblock %}
-
 {% block content %}
 <div class="container form_base">
   <form method="post" id="modifica_card_form" novalidate>
@@ -9,5 +8,5 @@
     {% include 'form_base.html' with form=form %}
     <button type="submit" class="col-12 btn btn-info">Submit</button>
   </form>
-  {% endblock %}
+{% endblock %}
 </div>

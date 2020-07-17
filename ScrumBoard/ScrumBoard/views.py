@@ -18,16 +18,25 @@ def home(request):
 
 @login_required(login_url='/login')
 def dashboard(request):
-    return render(request, "dashboard.html", {'board': Board.objects.filter(proprietario=request.user).union(Board.objects.filter(partecipanti=request.user))})
+    return render(request, "dashboard.html", {'board': Board.objects.filter(proprietario=request.user).union(
+        Board.objects.filter(partecipanti=request.user))})
 
 
 @login_required(login_url='/login')
 def showboard(request, board_id):
+    is_authorized = False
     try:
         board = Board.objects.get(pk=board_id)
+        auth_users = Board.objects.filter(proprietario=request.user.id).union(  # utilizzato per raccogliere la lista di utenti
+            Board.objects.filter(partecipanti=request.user.id))                 # autorizzati ad accedere alla board
+
+        if board in auth_users:
+            is_authorized = True
+
     except Board.DoesNotExist:
         board = None
-    return render(request, "showboard.html", {'board': board, 'board_id': board_id})
+
+    return render(request, "showboard.html", {'board': board, 'board_id': board_id, 'is_authorized': is_authorized})
 
 
 @login_required(login_url='/login')
@@ -95,7 +104,7 @@ def aggiungi_colonna(request, board_id):
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
             # render commentato per il momento
-            #return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
+            # return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
     else:
         column_form = ColumnForm()
     return render(request, "aggiungi_colonna.html",
@@ -185,13 +194,13 @@ def modifica_card(request, card_id):
             return redirect(redirect_to)
     else:
         card_form = crea_card_form(board=board_id, data={'nome': card.nome,
-                                                            'descrizione': card.descrizione,
-                                                            'data_scadenza': card.data_scadenza,
-                                                            'story_points': card.story_points,
-                                                            'colonna': card.colonna,
-                                                            'membri': card.membri.all()
+                                                         'descrizione': card.descrizione,
+                                                         'data_scadenza': card.data_scadenza,
+                                                         'story_points': card.story_points,
+                                                         'colonna': card.colonna,
+                                                         'membri': card.membri.all()
                                                          })
-        #card_form = filtra_colonne(board=board_id,data=card.__dict__)
+        # card_form = filtra_colonne(board=board_id,data=card.__dict__)
     return render(request, "modifica_card.html", {"form": card_form})
 
 

@@ -79,6 +79,7 @@
         {% endif %}
     </div>
     {% else %}
-    <p>No Board Found for id: {{ board_id }} - you may not have sufficient permissions to access this page </p>
+          {% include "error.html" %}
+    <!-- <p>No Board Found for id: {{ board_id }} - you may not have sufficient permissions to access this page </p> -->
     {% endif %}
 {% endblock %}

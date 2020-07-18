@@ -143,7 +143,10 @@ class Colonna(models.Model):
 
     def Colonna(request, colonna_id):
         def get_absolute_url(self):
-            return reverse('show-colonna', args=[str(self.id)])
+            return reverse('edit-column', args=[str(self.id)])
+
+    def get_absolute_url(self):
+        return reverse('edit-column', args=[str(self.id)])
 
     def is_ultima_colonna(self):
         """Restituisce true se questa colonna è l'ultima colonna della board"""

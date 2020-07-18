@@ -155,9 +155,27 @@ def modifica_board(request, board_id):
 
 
 @login_required(login_url='/login')
-def modifica_colonna(request, colonna_id):
+def modifica_colonna(request, column_id):
     """modifica il nome della colonna"""
-    colonna = Colonna.objects.get(id=colonna_id)
+    is_authorized = False
+
+    try:
+        colonna = Colonna.objects.get(id=column_id)
+        board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
+
+        auth_users = Board.objects.filter(proprietario=request.user.id).union(
+            # utilizzato per raccogliere la lista di utenti
+            Board.objects.filter(  # autorizzati ad accedere alla board e quindi alla card da modificare
+                partecipanti=request.user.id))
+
+        if board in auth_users:
+            is_authorized = True
+
+    except Colonna.DoesNotExist:
+        colonna = None
+        return render(request, "modifica_colonna.html",
+                      {'column': colonna, 'is_authorized': is_authorized})
+
     if request.method == "POST":
         column_form = ColumnForm(request.POST)
         if column_form.is_valid():
@@ -166,18 +184,19 @@ def modifica_colonna(request, colonna_id):
             return HttpResponse("Colonna modificata")
     else:
         column_form = ColumnForm({'nome_colonna': colonna.nome})
-        lista_cards = Card.objects.filter(colonna=colonna_id)
-    """return render(request, "aggiungi_colonna.html",
-                  {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero"""
-    return render(request, "form_tests/modifica_colonna_test.html",
-                  {'form': column_form, 'colonna_id': colonna_id, 'cards': lista_cards})
+        lista_cards = Card.objects.filter(colonna=column_id)
+
+    """return render(request, "form_tests/modifica_colonna.html",
+                      {'form': column_form, 'column_id': column_id, 'cards': lista_cards})"""
+    return render(request, "modifica_colonna.html",
+                  {'form': column_form, 'column': colonna, 'cards': lista_cards, 'is_authorized': is_authorized})
 
 
 @login_required(login_url='/login')
 def modifica_card(request, card_id):
     is_authorized = False
 
-    try:        # try catch per evitare di avere una pagina di errore quando la card non esiste nel db
+    try:  # try catch per evitare di avere una pagina di errore quando la card non esiste nel db
         card = Card.objects.get(id=card_id)
         board_id = card.colonna.board.id
     except Card.DoesNotExist:
@@ -185,8 +204,9 @@ def modifica_card(request, card_id):
         return render(request, "modifica_card.html", {"card": card, "is_authorized": is_authorized})
 
     board = Board.objects.get(pk=board_id)
-    auth_users = Board.objects.filter(proprietario=request.user.id).union( # utilizzato per raccogliere la lista di utenti
-        Board.objects.filter( # autorizzati ad accedere alla board e quindi alla card da modificare
+    auth_users = Board.objects.filter(proprietario=request.user.id).union(
+        # utilizzato per raccogliere la lista di utenti
+        Board.objects.filter(  # autorizzati ad accedere alla board e quindi alla card da modificare
             partecipanti=request.user.id))
 
     if board in auth_users:  # controllo se presente

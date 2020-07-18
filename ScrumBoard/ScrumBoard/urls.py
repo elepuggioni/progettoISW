@@ -28,16 +28,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', views.hello),
     path(r'dashboard/', views.dashboard, name='dashboard'),
-    path(r'board/', views.board, name='board'),
     path(r'dashboard/crea_board', views.crea_board, name='crea-board'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
-    path(r'modifica_colonna/<column_id>', views.modifica_colonna, name='edit-column'),
     path(r'board/<board_id>/aggiungi_utente', views.aggiungi_utente, name='add-user'),
     path(r'burndown/<board_id>', views.burndown, name='burndown'),
     path(r'card/<card_id>/', views.showcard, name='show-card'),
+    path(r'modifica_colonna/<column_id>', views.modifica_colonna, name='edit-column'),
     path(r'modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
+    path(r'modifica_colonna/', views.colonna_vuota, name='edit-column'),    # in caso non sia inserito un id nel url
+    path(r'modifica_card/', views.card_vuota, name='modifica-card'),    # in caso non sia inserito un id nel url
+    path(r'board/', views.board_vuota, name='show-board'),
     path('', include('Accounts.urls')),
 
     #test per la visualizzazione dei forms

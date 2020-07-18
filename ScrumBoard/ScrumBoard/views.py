@@ -23,8 +23,27 @@ def dashboard(request):
 
 
 @login_required(login_url='/login')
+def card_vuota(request):
+    return render(request, "modifica_card.html", {"is_authorized": False})
+
+
+@login_required(login_url='/login')
+def colonna_vuota(request):
+    return render(request, "modifica_colonna.html", {'is_authorized': False})
+
+
+@login_required(login_url='/login')
+def board_vuota(request):
+    return render(request, "showboard.html", {'is_authorized': False})
+
+
+@login_required(login_url='/login')
 def showboard(request, board_id):
     is_authorized = False
+
+    if not board_id.isdigit():
+        return render(request, "showboard.html", {'is_authorized': is_authorized})
+
     try:
         board = Board.objects.get(pk=board_id)
         auth_users = Board.objects.filter(proprietario=request.user.id).union(
@@ -131,11 +150,6 @@ def aggiungi_utente(request, board_id):
 
 
 @login_required(login_url='/login')
-def board(request):  # nel caso in cui non venga specificato un board_id nel url si ritorna in dashboard
-    return redirect('dashboard')  # il comportamento può essere cambiato se lo riteniamo opportuno
-
-
-@login_required(login_url='/login')
 def modifica_board(request, board_id):
     """Modifica il valore del nome della board"""
     board = Board.objects.get(id=board_id)
@@ -158,6 +172,10 @@ def modifica_board(request, board_id):
 def modifica_colonna(request, column_id):
     """modifica il nome della colonna"""
     is_authorized = False
+
+    if not column_id.isdigit() or len(column_id) == 0:
+        return render(request, "modifica_colonna.html",
+                      {'colonna': None, 'is_authorized': is_authorized})
 
     try:
         colonna = Colonna.objects.get(id=column_id)
@@ -195,6 +213,10 @@ def modifica_colonna(request, column_id):
 @login_required(login_url='/login')
 def modifica_card(request, card_id):
     is_authorized = False
+
+    if not card_id.isdigit():
+        return render(request, "modifica_card.html",
+                      {'card': None, 'is_authorized': is_authorized})
 
     try:  # try catch per evitare di avere una pagina di errore quando la card non esiste nel db
         card = Card.objects.get(id=card_id)

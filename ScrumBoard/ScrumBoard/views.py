@@ -180,7 +180,7 @@ def modifica_colonna(request, column_id):
     try:
         colonna = Colonna.objects.get(id=column_id)
         board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
-        #board_id = card.colonna.board.id
+        board_id = colonna.board_id
 
         auth_users = Board.objects.filter(proprietario=request.user.id).union(
             # utilizzato per raccogliere la lista di utenti

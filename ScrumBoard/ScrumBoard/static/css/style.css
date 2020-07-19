@@ -112,6 +112,13 @@ a:hover {
     max-width:150px;
 }
 
+.edit-column-card {
+    width: 500px;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
 .card-body{
 
 }
@@ -138,7 +145,7 @@ a:hover {
     transition: .2s;
 }
 
-.card:hover .card-hidden{
+.card:hover .card-hidden .edit-column-card{
     display:block;
     height:auto;
 

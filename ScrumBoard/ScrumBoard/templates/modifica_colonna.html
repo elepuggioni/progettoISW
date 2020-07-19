@@ -3,15 +3,66 @@
 {% block title %}Modifica colonna{% endblock %}
 {% block content %}
     {% if column and is_authorized %}
-<div class="container form_base">
-  <form method="post" id="modifica_column_form" novalidate>
+<div class="container mx-start" style="width: 1200px">
+<div class="row">
+
+        <!-- Prima colonna sticky quando si scrolla -->
+<div class="col-5">
+    <form method="post" id="modifica_column_form" novalidate class="sticky-top p-4">
     {% csrf_token %}
     {% include 'form_base.html' with form=form %}
     <button type="submit" class="col-12 btn btn-info">Submit</button>
   </form>
+</div>
+<div class="col-1" >
+    <!-- colonna vuota -->
+</div>
+
+        <!-- Terza colonna delle cards che scrolla da sola -->
+<div class="col-6">
+         {% for card in column.get_cards %}
+                <div class="col-12 m-0 p-0 d-flex justify-content-center">
+                    <div class="edit-column-card border mx-2 my-1 p-1 m-2">
+                        <div class="text-secondary p-0 m-0">
+                            <div class="container m-0 p-0">
+                                <div class="row m-1 px-2 pt-1 pb-1">
+                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
+                                        <a href="{{ card.get_absolute_url }}" style="max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
+                                    </div>
+                                    <div class="col-1 edit d-flex justify-content-end p-0 m-0">
+                                        <a href="/cancella_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/delete.png" alt="edit" height="18px" width="18px"></a>
+                                    </div>
+                                    <div class="col-1 edit d-flex justify-content-end p-0 m-0">
+                                        <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a>
+                                    </div>
+                                    <hr>
+                                </div>
+                            </div>
+                                    <div class=" m-1 p-1 card-description mx-1 my-0 text-wrap"><hr>{{ card.descrizione }}<hr>
+                                    </div>
+                                <div class="card-details mx-1 my-0">
+                                    <div><b>Story points: </b>{{ card.story_points }}</div>
+                                    <div><b>Added: </b>{{ card.data_creazione }}</div>
+                                    <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
+                                    <hr>
+                                </div>
+                            </div>
+                        <div class="col-12 p-1 m-1 d-flex justify-content-start">
+                        {% if user in card.get_users %}
+                            {% for user in card.get_users %}
+                                <a href="#" title="{{ user.username }}" class="col-1 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="card-description">Nessun utente associato. </div>
+                        {% endif %}
+                        <br>
+                        </div>
+                            </div>
+                        </div>
+        {% endfor %}
         {% else %}
     {% include "error.html" %}
     <!-- <p>You may not have sufficient permissions to access this page </p> -->
     {% endif %}
 {% endblock %}
-</div>
+             </div>

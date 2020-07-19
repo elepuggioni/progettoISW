@@ -41,7 +41,8 @@ def cancella_card_vuota(request):
 def board_vuota(request):
     return render(request, "showboard.html", {'is_authorized': False})
 
-
+# questa è stata usata per provare a risolvere dashboard/* però non funziona
+# la lascio temporaneamente qui ma si può cancellare
 @login_required(login_url='/login')
 def dashboard_param(request, value):
     return redirect('/dashboard')
@@ -56,11 +57,10 @@ def showboard(request, board_id):
 
     try:
         board = Board.objects.get(pk=board_id)
-        auth_users = Board.objects.filter(proprietario=request.user.id).union(
-            # utilizzato per raccogliere la lista di utenti
-            Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(Board.objects.filter(partecipanti=request.user.id))
 
-        if board in auth_users:
+        if board in user_boards:
             is_authorized = True
 
     except Board.DoesNotExist:
@@ -190,14 +190,12 @@ def modifica_colonna(request, column_id):
     try:
         colonna = Colonna.objects.get(id=column_id)
         board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
-        board_id = colonna.board_id
+        # board_id = colonna.board_id
 
-        auth_users = Board.objects.filter(proprietario=request.user.id).union(
-            # utilizzato per raccogliere la lista di utenti
-            Board.objects.filter(  # autorizzati ad accedere alla board e quindi alla card da modificare
-                partecipanti=request.user.id))
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(Board.objects.filter(partecipanti=request.user.id))
 
-        if board in auth_users:
+        if board in user_boards:
             is_authorized = True
 
     except Colonna.DoesNotExist:
@@ -214,8 +212,8 @@ def modifica_colonna(request, column_id):
             redirect_to = Board.objects.get(pk=colonna.board_id)
             return redirect(redirect_to)
     else:
-        column_form = ColumnForm({'nome_colonna': colonna.nome})
-        lista_cards = Card.objects.filter(colonna=column_id)
+        column_form = ColumnForm({'nome': colonna.nome})
+        # lista_cards = Card.objects.filter(colonna=column_id)
 
     """return render(request, "form_tests/modifica_colonna.html",
                       {'form': column_form, 'column_id': column_id, 'cards': lista_cards})"""
@@ -239,12 +237,11 @@ def modifica_card(request, card_id):
         return render(request, "modifica_card.html", {"card": card, "is_authorized": is_authorized})
 
     board = Board.objects.get(pk=board_id)
-    auth_users = Board.objects.filter(proprietario=request.user.id).union(
-        # utilizzato per raccogliere la lista di utenti
-        Board.objects.filter(  # autorizzati ad accedere alla board e quindi alla card da modificare
-            partecipanti=request.user.id))
 
-    if board in auth_users:  # controllo se presente
+    # utilizzato per trovare la lista di boards associate all'utente
+    user_boards = Board.objects.filter(proprietario=request.user.id).union(Board.objects.filter(partecipanti=request.user.id))
+
+    if board in user_boards:  # controllo se presente
         is_authorized = True
 
     if request.method == "POST":
@@ -309,12 +306,11 @@ def cancella_card(request, card_id):
     column = Colonna.objects.get(id=card.colonna_id)
     board = Board.objects.get(pk=column.board_id)
 
+    # utilizzato per trovare la lista di boards associate all'utente
     # questo si può cambiare a solo il proprietario se dovessimo decidere che solo il proprietario può eliminare le cards
-    auth_users = Board.objects.filter(proprietario=request.user.id).union(
-        # utilizzato per raccogliere la lista di utenti
-        Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board
+    user_boards = Board.objects.filter(proprietario=request.user.id).union(Board.objects.filter(partecipanti=request.user.id))
 
-    if board in auth_users:
+    if board in user_boards:
         Card.objects.get(id=card_id).delete()
         return redirect(column)
 

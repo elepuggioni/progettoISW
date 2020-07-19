@@ -180,6 +180,7 @@ def modifica_colonna(request, column_id):
     try:
         colonna = Colonna.objects.get(id=column_id)
         board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
+        #board_id = card.colonna.board.id
 
         auth_users = Board.objects.filter(proprietario=request.user.id).union(
             # utilizzato per raccogliere la lista di utenti
@@ -199,7 +200,9 @@ def modifica_colonna(request, column_id):
         if column_form.is_valid():
             colonna.nome = column_form.cleaned_data['nome'],
             colonna.save()
-            return HttpResponse("Colonna modificata")
+
+            redirect_to = Board.objects.get(pk=colonna.board_id)
+            return redirect(redirect_to)
     else:
         column_form = ColumnForm({'nome_colonna': colonna.nome})
         lista_cards = Card.objects.filter(colonna=column_id)

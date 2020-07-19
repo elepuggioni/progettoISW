@@ -4,10 +4,14 @@
 {% block content %}
     {% if column and is_authorized %}
 <div class="container form_base">
-  <h1>placeholder</h1>
-    <!-- qui visualizzazione cards e modifche -->
-</div>
-    {% else %}
-        {% include "error.html" %}
+  <form method="post" id="modifica_column_form" novalidate>
+    {% csrf_token %}
+    {% include 'form_base.html' with form=form %}
+    <button type="submit" class="col-12 btn btn-info">Submit</button>
+  </form>
+        {% else %}
+    {% include "error.html" %}
+    <!-- <p>You may not have sufficient permissions to access this page </p> -->
     {% endif %}
 {% endblock %}
+</div>

@@ -43,6 +43,11 @@ def board_vuota(request):
 
 
 @login_required(login_url='/login')
+def dashboard_param(request, value):
+    return redirect('/dashboard')
+
+
+@login_required(login_url='/login')
 def showboard(request, board_id):
     is_authorized = False
 

@@ -198,7 +198,7 @@ def modifica_colonna(request, column_id):
     if request.method == "POST":
         column_form = ColumnForm(request.POST)
         if column_form.is_valid():
-            colonna.nome = column_form.cleaned_data['nome'],
+            colonna.nome = column_form.cleaned_data['nome']
             colonna.save()
 
             redirect_to = Board.objects.get(pk=colonna.board_id)

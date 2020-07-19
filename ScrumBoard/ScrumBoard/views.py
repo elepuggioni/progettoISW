@@ -33,6 +33,11 @@ def colonna_vuota(request):
 
 
 @login_required(login_url='/login')
+def cancella_card_vuota(request):
+    return render(request, "cancella_card.html", {'is_authorized': False})
+
+
+@login_required(login_url='/login')
 def board_vuota(request):
     return render(request, "showboard.html", {'is_authorized': False})
 
@@ -210,7 +215,7 @@ def modifica_colonna(request, column_id):
     """return render(request, "form_tests/modifica_colonna.html",
                       {'form': column_form, 'column_id': column_id, 'cards': lista_cards})"""
     return render(request, "modifica_colonna.html",
-                  {'form': column_form, 'column': colonna, 'cards': lista_cards, 'is_authorized': is_authorized})
+                  {'form': column_form, 'column': colonna, 'is_authorized': is_authorized})
 
 
 @login_required(login_url='/login')
@@ -294,6 +299,19 @@ def cancella_colonna(request, colonna_id):
 @login_required(login_url='/login')
 def cancella_card(request, card_id):
     """Elimina la card indicata"""
-    board = Card.objects.get(id=card_id)
-    Card.objects.get(id=card_id).delete()
-    return HttpResponseRedirect('board/%d/' % board.id)
+
+    card = Card.objects.get(id=card_id)
+    column = Colonna.objects.get(id=card.colonna_id)
+    board = Board.objects.get(pk=column.board_id)
+
+    # questo si può cambiare a solo il proprietario se dovessimo decidere che solo il proprietario può eliminare le cards
+    auth_users = Board.objects.filter(proprietario=request.user.id).union(
+        # utilizzato per raccogliere la lista di utenti
+        Board.objects.filter(partecipanti=request.user.id))  # autorizzati ad accedere alla board
+
+    if board in auth_users:
+        Card.objects.get(id=card_id).delete()
+        return redirect(column)
+
+    else:  # nel caso in cui l'utente non faccia parte della stessa board in cui si trova la card
+        return render(request, "cancella_card.html", {'is_authorized': False})

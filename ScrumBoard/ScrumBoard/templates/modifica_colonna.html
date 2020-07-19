@@ -8,7 +8,7 @@
 
         <!-- Prima colonna sticky quando si scrolla -->
 <div class="col-5">
-    <form method="post" id="modifica_column_form" novalidate class="sticky-top p-4">
+    <form method="post" id="modifica_column_form" novalidate class="sticky-top">
     {% csrf_token %}
     {% include 'form_base.html' with form=form %}
     <button type="submit" class="col-12 btn btn-info">Submit</button>
@@ -30,7 +30,7 @@
                                         <a href="{{ card.get_absolute_url }}" style="max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
                                     </div>
                                     <div class="col-1 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/cancella_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/delete.png" alt="edit" height="18px" width="18px"></a>
+                                        <a href="/cancella_card/{{ card.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa card?');"><img src="/static/media/delete.png" alt="edit" height="18px" width="18px"></a>
                                     </div>
                                     <div class="col-1 edit d-flex justify-content-end p-0 m-0">
                                         <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a>
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                         <div class="col-12 p-1 m-1 d-flex justify-content-start">
-                        {% if user in card.get_users %}
+                        {% if card.get_users %}
                             {% for user in card.get_users %}
                                 <a href="#" title="{{ user.username }}" class="col-1 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
                             {% endfor %}

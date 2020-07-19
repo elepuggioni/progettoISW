@@ -39,6 +39,8 @@ urlpatterns = [
     path(r'modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
     path(r'modifica_colonna/', views.colonna_vuota, name='edit-column'),    # in caso non sia inserito un id nel url
     path(r'modifica_card/', views.card_vuota, name='modifica-card'),    # in caso non sia inserito un id nel url
+    path(r'cancella_card/', views.cancella_card_vuota, name='cancella-card'),  # in caso non sia inserito un id nel url
+    path(r'cancella_card/<card_id>', views.cancella_card, name='cancella-card'),
     path(r'board/', views.board_vuota, name='show-board'),
     path('', include('Accounts.urls')),
 

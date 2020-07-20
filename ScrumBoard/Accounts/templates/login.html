@@ -9,6 +9,12 @@
 			<h3 class="text-header">LOGIN</h3>
 		</div>
 
+		{% for message in messages %}
+		{% if message.tags == "success" %}
+		<p class="d-flex justify-content-center messages-{{message.tags}}">{{message}}</p>
+		{% endif %}
+		{% endfor %}
+
 		<div class="d-flex justify-content-center form_container mb-3">
 			<form method="POST" action="">
 				{% csrf_token %}
@@ -35,7 +41,9 @@
 		</div>
 
 		{% for message in messages %}
-			<p id="messages" class="d-flex justify-content-center">{{message}}</p>
+		{% if message.tags != "success" %}
+		<p id="messages" class="d-flex justify-content-center messages-{{message.tags}}">{{message}}</p>
+		{% endif %}
 		{% endfor %}
 
 		<div class="mb-2">

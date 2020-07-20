@@ -38,6 +38,11 @@ def cancella_card_vuota(request):
 
 
 @login_required(login_url='/login')
+def modifica_card_vuota(request):
+    return render(request, "modifica_card.html", {'is_authorized': False})
+
+
+@login_required(login_url='/login')
 def cancella_colonna_vuota(request):
     return render(request, "cancella_colonna.html", {'is_authorized': False})
 
@@ -205,7 +210,7 @@ def modifica_colonna(request, column_id):
                       {'column': colonna, 'is_authorized': is_authorized})
 
     if request.method == "POST":
-        if 'modifica_nome' in request.POST: # controllo il "name" nel button per capire quale è stato premuto
+        if 'modifica_nome' in request.POST:  # controllo il "name" nel button per capire quale è stato premuto
             column_form = ColumnForm(request.POST)
             if column_form.is_valid():
                 colonna.nome = column_form.cleaned_data['nome']
@@ -213,7 +218,7 @@ def modifica_colonna(request, column_id):
 
                 redirect_to = Board.objects.get(pk=colonna.board_id)
                 return redirect(redirect_to)
-        elif 'cancella_colonna' in request.POST: # controllo il "name" nel button per capire quale è stato premuto
+        elif 'cancella_colonna' in request.POST:  # controllo il "name" nel button per capire quale è stato premuto
             return cancella_colonna(request, column_id)
 
     else:
@@ -319,7 +324,11 @@ def cancella_colonna(request, column_id):
 def cancella_card(request, card_id):
     """Elimina la card indicata"""
 
-    card = Card.objects.get(id=card_id)
+    try:
+        card = Card.objects.get(id=card_id)
+    except Card.DoesNotExist:
+        return render(request, "cancella_card.html", {'is_authorized': False})
+
     column = Colonna.objects.get(id=card.colonna_id)
     board = Board.objects.get(pk=column.board_id)
 

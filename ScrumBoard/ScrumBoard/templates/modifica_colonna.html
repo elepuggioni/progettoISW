@@ -8,11 +8,14 @@
 
         <!-- Prima colonna sticky quando si scrolla -->
 <div class="col-5">
-    <form method="post" id="modifica_column_form" novalidate class="sticky-top">
+    <form method="post" id="modifica_column_form" name="" novalidate class="sticky-top">
     {% csrf_token %}
     {% include 'form_base.html' with form=form %}
-    <button type="submit" class="col-12 btn btn-info">Submit</button>
+    <button type="submit" name="modifica_nome" class="col-12 btn btn-info">Submit</button>
+    <button type="submit" name="cancella_colonna" class="col-12 btn btn-danger" style="margin-top: 10px"
+            onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">Cancella questa colonna</button>
   </form>
+
 </div>
 <div class="col-1" >
     <!-- colonna vuota -->

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from ScrumBoard import views
 from django.http import HttpResponse
 
@@ -22,13 +22,12 @@ from django.http import HttpResponse
 def home(request):
     return HttpResponse('Home page')
 
-
 urlpatterns = [
     path('', views.home, name='home-view'),
     path('admin/', admin.site.urls),
     path('hello/', views.hello),
-    path(r'dashboard/', views.dashboard, name='dashboard'),
     path(r'dashboard/crea_board', views.crea_board, name='crea-board'),
+    re_path(r'dashboard\/.*', views.dashboard, name='dashboard'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
@@ -41,6 +40,8 @@ urlpatterns = [
     path(r'modifica_card/', views.card_vuota, name='modifica-card'),    # in caso non sia inserito un id nel url
     path(r'cancella_card/', views.cancella_card_vuota, name='cancella-card'),  # in caso non sia inserito un id nel url
     path(r'cancella_card/<card_id>', views.cancella_card, name='cancella-card'),
+    path(r'cancella_colonna/', views.cancella_colonna_vuota, name='cancella-colonna'),
+    path(r'cancella_colonna/<column_id>/', views.cancella_colonna, name='cancella-colonna'),
     path(r'board/', views.board_vuota, name='show-board'),
     path('', include('Accounts.urls')),
 
@@ -52,3 +53,4 @@ urlpatterns = [
     path(r'test/modifica_colonna/<colonna_id>', views.modifica_colonna, name='modifica-colonna'),
     path(r'test/modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
 ]
+

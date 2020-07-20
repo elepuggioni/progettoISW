@@ -162,7 +162,7 @@ class Card(models.Model):
     data_creazione = models.DateTimeField(auto_now_add=True)
     data_scadenza = models.DateField(null=True)
     story_points = models.IntegerField(null=False, blank=True, default=0)
-    colonna = models.ForeignKey(Colonna, on_delete="CASCADE")
+    colonna = models.ForeignKey(Colonna, on_delete=models.CASCADE)  # senza "" altrimenti restituisce errore eliminando
     membri = models.ManyToManyField(User, related_name='membri')
 
     """

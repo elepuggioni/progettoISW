@@ -145,7 +145,7 @@ a:hover {
     transition: .2s;
 }
 
-.card:hover .card-hidden .edit-column-card{
+.card:hover .card-hidden {
     display:block;
     height:auto;
 
@@ -278,7 +278,6 @@ a:hover {
 .descrizione-box{
     min-height:10px;
     max-height:500px;
-    background-color:#fff;
     overflow-y:auto;
     font-size:14px;
     background-color:#e6e6e6;

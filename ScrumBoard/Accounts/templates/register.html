@@ -38,9 +38,15 @@
 			</form>
 		</div>
 
-		{% for error in form.errors %}
-			<p id="messages" class="d-flex justify-content-center">{{error}}</p>
-		{% endfor %}
+		{% if form.errors %}
+			<div id="form-error">
+				{% for field in form %}
+				{% if field.errors %}
+				<p class="d-flex justify-content-center errorlist">{{ field.errors|striptags }}</p>
+				{% endif %}
+				{% endfor %}
+			</div>
+		{% endif %}
 
 		<div class="mb-2">
 			<div class="d-flex justify-content-center links">

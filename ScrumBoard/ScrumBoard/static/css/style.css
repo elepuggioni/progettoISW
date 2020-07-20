@@ -290,3 +290,10 @@ a:hover {
 input[type=checkbox], input[type=radio]{
     transform: scale(2);
 }
+
+.errorlist{
+    background-color: #e76f51;
+	color: #fff;
+	padding: 10px;
+	margin-top: 10px;
+}

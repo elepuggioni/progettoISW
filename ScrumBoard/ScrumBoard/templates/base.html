@@ -38,7 +38,7 @@
                 <div class="col">
                      <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
                 </div>
-                {% elif request.get_full_path == login %}
+                {% elif request.path == login %}
                 <div class="col-11">
                     <a href="" class="h1 text-header">scrumboard</a>
                 </div>
@@ -46,7 +46,7 @@
                      <a href="{% url 'register' %}" class="btn btn-outline-light">Registrati</a>
                 </div>
 
-                {% else %}
+                {% elif request.path == register %}
                 <div class="col-11">
                     <a href="" class="h1 text-header">scrumboard</a>
                 </div>

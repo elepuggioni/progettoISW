@@ -21,18 +21,18 @@
         {% if board.get_colonne %}
         {% for colonna in board.get_colonne %}
 
-        <div class="col board-column scrollbar-info border rounded border-success mx-1 d-flex align-items-start d-flex justify-content-center">
-            <div class="row justify-content-center">
-                <div class="col-10 col_title p-0 m-0 d-flex justify-content-center">
+        <div class="col board-column scrollbar-info border rounded border-success px-0 mx-1 d-flex align-items-start d-flex justify-content-center">
+            <div class="row justify-content-end w-100">
+                <div class="col-8 col_title p-0 m-0 d-flex justify-content-center">
                     <a href="{{ colonna.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
                 </div>
-                <div class="col-2 p-0 m-0 justify-content-right">       <!-- da allineare bene -->
+                <div class="col-2 p-0 m-0 justify-content-end">       <!-- da allineare bene -->
                     <a href="/cancella_colonna/{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')"><img src="/static/media/delete.png" alt="edit" height="15px" width="18px"></a>
                 </div>
                 <div class="w-100"></div>
                 {% for card in colonna.get_cards %}
                 <div class="col-12 m-0 p-0 d-flex justify-content-center">
-                    <div class="card border-secondary mx-2 my-1 p-0">
+                    <div class="card border-secondary mx-0 my-1 p-0">
                         <div class="card-body text-secondary p-0 m-0">
                             <div class="container m-0 p-0">
                                 <div class="row m-0 px-2 pt-1 pb-0">

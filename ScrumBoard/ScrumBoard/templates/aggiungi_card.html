@@ -3,6 +3,7 @@
 {% block title %}Aggiunta card{% endblock %}
 
 {% block content %}
+    {% if board and is_authorized %}
 <div class="container form_base">
 
 <form method="post" novalidate>
@@ -10,5 +11,8 @@
   {% include 'form_base.html' with form=form %}
   <button type="submit" class="col-12 btn btn-info">Submit</button>
 </form>
+    {% else %}
+        {% include "error.html" %}
+    {% endif %}
 {% endblock %}
 </div>

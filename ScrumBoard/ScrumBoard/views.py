@@ -104,6 +104,23 @@ def crea_board(request):
 
 @login_required(login_url='/login')
 def aggiungi_card(request, board_id):
+    is_authorized = False
+
+    try:
+        board = Board.objects.get(pk=board_id)
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(
+            Board.objects.filter(partecipanti=request.user.id))
+
+        if board in user_boards:
+            is_authorized = True
+
+    except Board.DoesNotExist:
+        board = None
+        is_authorized = False
+        return render(request, "aggiungi_card.html",
+                      {"board": board, "is_authorized": is_authorized})
+
     if request.method == "POST":
         card_form = crea_card_form(board_id, request.POST)
         if card_form.is_valid():
@@ -122,11 +139,27 @@ def aggiungi_card(request, board_id):
             return redirect(redirect_to)
     else:
         card_form = crea_card_form(board=board_id)
-    return render(request, "aggiungi_card.html", {"form": card_form})
+    return render(request, "aggiungi_card.html", {"board": board, "form": card_form, "is_authorized": is_authorized})
 
 
 @login_required(login_url='/login')
 def aggiungi_colonna(request, board_id):
+    is_authorized = False
+
+    try:
+        board = Board.objects.get(pk=board_id)
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(
+            Board.objects.filter(partecipanti=request.user.id))
+
+        if board in user_boards:
+            is_authorized = True
+    except Board.DoesNotExist:
+        board = None
+        is_authorized = False
+        return render(request, "aggiungi_colonna.html",
+                      {"board": board, "is_authorized": is_authorized})
+
     if request.method == "POST":
         column_form = ColumnForm(request.POST)
         if column_form.is_valid():
@@ -143,14 +176,28 @@ def aggiungi_colonna(request, board_id):
     else:
         column_form = ColumnForm()
     return render(request, "aggiungi_colonna.html",
-                  {"form": column_form})  # aggiungi_colonna.html è un placeholder in attesa di quello vero
+                  {"form": column_form, "board": board, "is_authorized": is_authorized})  # aggiungi_colonna.html è un placeholder in attesa di quello vero
     # return render(request, "form_tests/aggiungi_colonna_test.html", {'form':column_form, 'board_id':board_id})
 
 
 @login_required(login_url='/login')
 def aggiungi_utente(request, board_id):
+    is_authorized = False
+
     lista_utenti = User.objects.exclude(is_superuser=True).exclude(id=request.user.id)
-    board = Board.objects.get(pk=board_id)
+
+    try:
+        board = Board.objects.get(pk=board_id)
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(
+            Board.objects.filter(partecipanti=request.user.id))
+
+        if board in user_boards:
+            is_authorized = True
+
+    except Board.DoesNotExist:
+        board = None
+        return render(request, "aggiungi_utente.html", {"board": board, "is_authorized": is_authorized})
 
     if request.method == "POST":
         user_form = add_user(request.user, data=request.POST)
@@ -161,7 +208,7 @@ def aggiungi_utente(request, board_id):
             return redirect(redirect_to)
     else:
         user_form = add_user(request.user, data={'membri': board.partecipanti.all()})
-    return render(request, "aggiungi_utente.html", {"form": user_form})
+    return render(request, "aggiungi_utente.html", {"board": board, "form": user_form, "is_authorized": is_authorized})
 
 
 @login_required(login_url='/login')
@@ -187,17 +234,14 @@ def modifica_board(request, board_id):
 def modifica_colonna(request, column_id):
     """modifica il nome della colonna"""
     is_authorized = False
-    print("dentro")
 
     if not column_id.isdigit():
-        print("isdigit")
         return render(request, "modifica_colonna.html",
                       {'colonna': None, 'is_authorized': is_authorized})
 
     try:
         colonna = Colonna.objects.get(id=column_id)
         board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
-        print("try")
         # board_id = colonna.board_id
 
         # utilizzato per trovare la lista di boards associate all'utente
@@ -205,11 +249,9 @@ def modifica_colonna(request, column_id):
             Board.objects.filter(partecipanti=request.user.id))
 
         if board in user_boards:
-            print("auth")
             is_authorized = True
 
     except Colonna.DoesNotExist:
-        print("except")
         colonna = None
         return render(request, "modifica_colonna.html",
                       {'column': colonna, 'is_authorized': is_authorized})
@@ -289,11 +331,19 @@ def modifica_card(request, card_id):
 
 @login_required(login_url='/login')
 def burndown(request, board_id):
+    is_authorized = False
     try:
         board = Board.objects.get(pk=board_id)
+        # utilizzato per trovare la lista di boards associate all'utente
+        user_boards = Board.objects.filter(proprietario=request.user.id).union(
+            Board.objects.filter(partecipanti=request.user.id))
+
+        if board in user_boards:
+            is_authorized = True
     except Board.DoesNotExist:
         board = None
     context = {
+        'is_authorized': is_authorized,
         'board': board
     }
     return render(request, "burndown.html", context)

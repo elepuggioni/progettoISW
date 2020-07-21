@@ -187,14 +187,17 @@ def modifica_board(request, board_id):
 def modifica_colonna(request, column_id):
     """modifica il nome della colonna"""
     is_authorized = False
+    print("dentro")
 
-    if not column_id.isdigit() or len(column_id) == 0:
+    if not column_id.isdigit():
+        print("isdigit")
         return render(request, "modifica_colonna.html",
                       {'colonna': None, 'is_authorized': is_authorized})
 
     try:
         colonna = Colonna.objects.get(id=column_id)
         board = Board.objects.get(pk=colonna.board_id)  # ottengo la board a cui appartiene la colonna
+        print("try")
         # board_id = colonna.board_id
 
         # utilizzato per trovare la lista di boards associate all'utente
@@ -202,9 +205,11 @@ def modifica_colonna(request, column_id):
             Board.objects.filter(partecipanti=request.user.id))
 
         if board in user_boards:
+            print("auth")
             is_authorized = True
 
     except Colonna.DoesNotExist:
+        print("except")
         colonna = None
         return render(request, "modifica_colonna.html",
                       {'column': colonna, 'is_authorized': is_authorized})

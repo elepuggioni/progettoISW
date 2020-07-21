@@ -42,11 +42,10 @@ urlpatterns = [
     path(r'cancella_card/<card_id>', views.cancella_card, name='cancella-card'),
     path(r'cancella_card/', views.cancella_card_vuota, name='cancella-card'),  # in caso non sia inserito un id nel url
     # colonna
-    path(r'modifica_colonna/<column_id>', views.modifica_colonna, name='edit-column'),
-    re_path(r'modifica_colonna\/.*', views.colonna_vuota, name='dashboard'),  # in caso non sia inserito un id nel url
+    path(r'modifica_colonna/<column_id>', views.modifica_colonna, name='modifica-colonna'),
+    re_path(r'modifica_colonna\/.*', views.colonna_vuota, name='modifica-colonna'),  # in caso non sia inserito un id nel url
     path(r'cancella_colonna/<column_id>/', views.cancella_colonna, name='cancella-colonna'),
-    path(r'cancella_colonna/', views.cancella_colonna_vuota, name='cancella-colonna'),
-    # in caso non sia inserito un id nel url
+    path(r'cancella_colonna/', views.cancella_colonna_vuota, name='cancella-colonna'), # in caso non sia inserito un id nel url
     # burndown
     path(r'burndown/<board_id>', views.burndown, name='burndown'),
 
@@ -56,7 +55,7 @@ urlpatterns = [
     # path(r'test/crea_board/', views.crea_board, name='crea-board'),
     # path(r'test/crea_colonna/<board_id>/', views.aggiungi_colonna, name='aggiungi-colonna'),
     # path(r'test/crea_card/<board_id>/', views.aggiungi_card, name='aggiungi-card'),
-    path(r'test/modifica_board/<board_id>/', views.modifica_board, name='modifica-board'),
-    path(r'test/modifica_colonna/<colonna_id>', views.modifica_colonna, name='modifica-colonna'),
-    path(r'test/modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
+    # path(r'test/modifica_board/<board_id>/', views.modifica_board, name='modifica-board'),
+    # path(r'test/modifica_colonna/<colonna_id>', views.modifica_colonna, name='modifica-colonna'),
+    # path(r'test/modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
 ]

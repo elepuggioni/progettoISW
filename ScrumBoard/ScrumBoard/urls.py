@@ -35,6 +35,7 @@ urlpatterns = [
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
     path(r'board/<board_id>/aggiungi_utente', views.aggiungi_utente, name='add-user'),
+    path(r'cancella_board/<board_id>', views.cancella_board, name='cancella-board'),
     # card
     path(r'card/<card_id>/', views.showcard, name='show-card'),
     path(r'modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),

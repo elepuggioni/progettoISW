@@ -34,6 +34,11 @@ h3 {
 .bg-column:hover {
     background-color: #52796F;
     border-color: #CAD2C5!important;
+    color: #CAD2C5!important;
+}
+
+.bg-column:hover .board-title {
+    color:#CAD2C5;
 }
 
 .bg-add {

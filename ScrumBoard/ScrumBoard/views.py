@@ -18,8 +18,7 @@ def home(request):
 
 @login_required(login_url='/login')
 def dashboard(request):
-    return render(request, "dashboard.html", {'board': Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))})
+    return render(request, "dashboard.html", {'board': Board.objects.filter(partecipanti=request.user)})
 
 
 @login_required(login_url='/login')
@@ -62,8 +61,7 @@ def showboard(request, board_id):
     try:
         board = Board.objects.get(pk=board_id)
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -94,6 +92,7 @@ def crea_board(request):
             )
             new_board.save()
             new_board.partecipanti.set(board_form.cleaned_data['membri'])
+            new_board.partecipanti.add(request.user)
 
             redirect_to = Board.objects.get(pk=new_board.pk)
             return redirect(redirect_to)
@@ -109,8 +108,7 @@ def aggiungi_card(request, board_id):
     try:
         board = Board.objects.get(pk=board_id)
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -149,8 +147,7 @@ def aggiungi_colonna(request, board_id):
     try:
         board = Board.objects.get(pk=board_id)
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -189,8 +186,7 @@ def aggiungi_utente(request, board_id):
     try:
         board = Board.objects.get(pk=board_id)
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -203,6 +199,7 @@ def aggiungi_utente(request, board_id):
         user_form = UserForm(board, data=request.POST)
         if user_form.is_valid():
             board.partecipanti.set(user_form.cleaned_data['membri'])
+            board.partecipanti.add(request.user)
 
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
@@ -245,8 +242,7 @@ def modifica_colonna(request, column_id):
         # board_id = colonna.board_id
 
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -296,8 +292,7 @@ def modifica_card(request, card_id):
     board = Board.objects.get(pk=board_id)
 
     # utilizzato per trovare la lista di boards associate all'utente
-    user_boards = Board.objects.filter(proprietario=request.user.id).union(
-        Board.objects.filter(partecipanti=request.user.id))
+    user_boards = Board.objects.filter(partecipanti=request.user)
 
     if board in user_boards:  # controllo se presente
         is_authorized = True
@@ -335,8 +330,7 @@ def burndown(request, board_id):
     try:
         board = Board.objects.get(pk=board_id)
         # utilizzato per trovare la lista di boards associate all'utente
-        user_boards = Board.objects.filter(proprietario=request.user.id).union(
-            Board.objects.filter(partecipanti=request.user.id))
+        user_boards = Board.objects.filter(partecipanti=request.user)
 
         if board in user_boards:
             is_authorized = True
@@ -364,8 +358,7 @@ def cancella_colonna(request, column_id):
 
     # utilizzato per trovare la lista di boards associate all'utente questo si può cambiare a solo il proprietario se
     # dovessimo decidere che solo il proprietario può eliminare le colonne
-    user_boards = Board.objects.filter(proprietario=request.user.id).union(
-        Board.objects.filter(partecipanti=request.user.id))
+    user_boards = Board.objects.filter(partecipanti=request.user)
 
     if board in user_boards:
         column.delete()
@@ -389,8 +382,7 @@ def cancella_card(request, card_id):
 
     # utilizzato per trovare la lista di boards associate all'utente questo si può cambiare a solo il proprietario se
     # dovessimo decidere che solo il proprietario può eliminare le cards
-    user_boards = Board.objects.filter(proprietario=request.user.id).union(
-        Board.objects.filter(partecipanti=request.user.id))
+    user_boards = Board.objects.filter(partecipanti=request.user)
 
     if board in user_boards:
         Card.objects.get(id=card_id).delete()

@@ -54,6 +54,7 @@ class CardForm(forms.Form):
     def __init__(self, board, data=None):
         super().__init__(data)
         self.fields['colonna'].queryset = Colonna.objects.filter(board=board)
+        self.fields['membri'].queryset = Board.objects.get(pk=board).partecipanti.all()
 
     nome = forms.CharField(
         label="Nome card",
@@ -82,7 +83,7 @@ class CardForm(forms.Form):
         to_field_name='nome'
     )
     membri = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+        queryset=None,
         to_field_name='username',
         label='membri',
         required=False,

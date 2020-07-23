@@ -54,7 +54,7 @@ def add_user(utente_loggato, *args, **kwargs):
 
 def crea_card_form(board, *args, **kwargs):
     queryset = Colonna.objects.filter(board=board)
-    utenti = User.objects.all()
+    utenti = Board.objects.get(pk=board).partecipanti.all()
 
     class CardForm(forms.Form):
         nome = forms.CharField(

@@ -8,10 +8,10 @@
 
 <div class="row h-100 d-flex justify-content-left">
     {% for board in board %}
-    <div class="col-2 bg-column border rounded border-success mx-2 px-0 my-2">
-        <div class="row justify-content-end h-100 px-1">
-            <div class="col-8 col_title p-0 m-0 d-flex justify-content-center align-items-center">
-                <a href="{{ board.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none board-title">{{ board.nome }}</a>
+    <div class="col-2 bg-column border rounded border-success mx-2 px-1 my-2">
+        <div class="row justify-content-end h-100 p-0">
+            <div class="col-8 p-0 m-0 d-flex justify-content-center align-items-center">
+                <a href="{{ board.get_absolute_url }}" class="text-uppercase text-wrap board-card board-title stretched-link text-decoration-none" style="max-width:90%">{{ board.nome }}</a>
             </div>
             <div class="col-2 p-0 m-0 justify-content-end">
                 <a href="/cancella_board/{{ board.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa board e tutti i dati associati?')"><img src="/static/media/delete.png" alt="edit" height="15px" width="18px"></a>

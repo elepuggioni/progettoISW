@@ -135,8 +135,13 @@ a:hover {
 }
 
 .card hr {
-    margin-bottom:4px;
-    margin-top:4px;
+    margin-bottom:6px;
+    margin-top:6px;
+    padding:0px;
+}
+
+.modifica-colonna-card hr {
+    margin:0px;
     padding:0px;
 }
 
@@ -153,7 +158,6 @@ a:hover {
 .card:hover .card-hidden {
     display:block;
     height:auto;
-
     opacity:1;
     padding-bottom: 4px;
 }

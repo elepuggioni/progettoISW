@@ -27,7 +27,9 @@
                     <a href="{{ colonna.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
                 </div>
                 <div class="col-2 p-0 m-0 justify-content-end">
-                    <a href="/cancella_colonna/{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')"><img src="/static/media/delete.png" alt="edit" height="15px" width="18px"></a>
+                    <a href="/cancella_colonna/{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
+                        <img src="/static/media/delete.png" alt="edit" height="15px" width="16px">
+                    </a>
                 </div>
                 <div class="w-100"></div>
                 {% for card in colonna.get_cards %}
@@ -40,24 +42,28 @@
                                         <a href="{{ card.get_absolute_url }}" style="max-width:95%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
                                     </div>
                                     <div class="col-2 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="18px" width="18px"></a></div>
+                                        <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a></div>
                                     <hr>
                                 </div>
                             </div>
-                            <div class="card-hidden">
-                                <div class="card-description mx-1 my-0"><hr>{{ card.descrizione }}<hr></div>
-                                <div class="card-details mx-1 my-0">
+                            <div class="card-hidden mx-1 my-0">
+                                <hr>
+                                {% if card.descrizione %}
+                                <div class="card-description m-0">{{ card.descrizione }}<hr></div>
+                                {% endif %}
+                                <div class="card-details m-0">
                                     <div><b>Story points: </b>{{ card.story_points }}</div>
                                     <div><b>Added: </b>{{ card.data_creazione }}</div>
                                     <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
                                 </div>
                             </div>
-                            <hr>
+                            <div class="mx-1">
+                                <hr>
+                            </div>
                             <div class="container mb-2 mr-1 ml-1 p-0 ">
                                 <div class="row m-0 p-0 justify-content-start">
-                                    <!-- for user in card.get_users ; break row after 6 users -->
                                     {% for user in card.get_users %}
-                                    <a href=" " title="{{ user.username }}" class="col-2 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
+                                        <a href=" " title="{{ user.username }}" class="col-2 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
                                     {% endfor %}
                                 </div>
                             </div>

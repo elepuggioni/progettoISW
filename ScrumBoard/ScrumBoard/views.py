@@ -18,8 +18,7 @@ def home(request):
 
 @login_required(login_url='/login')
 def dashboard(request):
-    return render(request, "dashboard.html", {'board': Board.objects.filter(proprietario=request.user).union(
-        Board.objects.filter(partecipanti=request.user))})
+    return render(request, "dashboard.html", {'board': Board.objects.filter(partecipanti=request.user)})
 
 
 @login_required(login_url='/login')
@@ -94,6 +93,7 @@ def crea_board(request):
             )
             new_board.save()
             new_board.partecipanti.set(board_form.cleaned_data['membri'])
+            new_board.partecipanti.add(new_board.proprietario)
 
             redirect_to = Board.objects.get(pk=new_board.pk)
             return redirect(redirect_to)

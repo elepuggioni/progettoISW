@@ -3,7 +3,7 @@
 {% block title %}Aggiunta utente{% endblock %}
 
 {% block content %}
-    {% if board and is_authorized %}
+    {% if board %}
 <div class="container form_base">
 
 <form method="post" novalidate>
@@ -12,7 +12,5 @@
   <button type="submit" class="col-12 btn btn-info">Submit</button>
 </form>
 </div>
-    {% else %}
-        {% include "error.html" %}
     {% endif %}
 {% endblock %}

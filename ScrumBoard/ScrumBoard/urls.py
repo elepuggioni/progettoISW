@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
-from ScrumBoard import views
 from django.http import HttpResponse
+from django.urls import path, include, re_path
+
+from ScrumBoard import views
 
 
 def home(request):
@@ -30,7 +31,6 @@ urlpatterns = [
     path(r'dashboard/crea_board', views.crea_board, name='crea-board'),
     re_path(r'dashboard\/.*', views.dashboard, name='dashboard'),
     # board
-    path(r'board/', views.board_vuota, name='show-board'),
     path(r'board/<board_id>/', views.showboard, name='show-board'),
     path(r'board/<board_id>/aggiungi_card', views.aggiungi_card, name='add-card'),
     path(r'board/<board_id>/aggiungi_colonna', views.aggiungi_colonna, name='add-column'),
@@ -38,17 +38,14 @@ urlpatterns = [
     path(r'cancella_board/<board_id>', views.cancella_board, name='cancella-board'),
     # card
     path(r'card/<card_id>/', views.showcard, name='show-card'),
-    path(r'modifica_card/<card_id>/', views.modifica_card, name='modifica-card'),
-    path(r'modifica_card/', views.modifica_card_vuota, name='modifica-card'),
+    path(r'modifica_card/<card_id>', views.modifica_card, name='modifica-card'),
     path(r'cancella_card/<card_id>', views.cancella_card, name='cancella-card'),
-    path(r'cancella_card/', views.cancella_card_vuota, name='cancella-card'),  # in caso non sia inserito un id nel url
     # colonna
     path(r'modifica_colonna/<column_id>', views.modifica_colonna, name='modifica-colonna'),
-    re_path(r'modifica_colonna\/.*', views.colonna_vuota, name='modifica-colonna'),  # in caso non sia inserito un id nel url
-    path(r'cancella_colonna/<column_id>/', views.cancella_colonna, name='cancella-colonna'),
-    path(r'cancella_colonna/', views.cancella_colonna_vuota, name='cancella-colonna'), # in caso non sia inserito un id nel url
+    path(r'cancella_colonna/<column_id>', views.cancella_colonna, name='cancella-colonna'),
     # burndown
     path(r'burndown/<board_id>', views.burndown, name='burndown'),
+    re_path(r'burndown/.*', views.burndown, name='burndown'),   # in caso di string come par
 
     path('', include('Accounts.urls')),
 

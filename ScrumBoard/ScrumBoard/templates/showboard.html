@@ -3,7 +3,7 @@
 {% block title %}Board Detail{% endblock %}
 
 {% block content %}
-      {% if board and is_authorized %}
+      {% if board %}
     <div class="container m-0 p-0">
         <div class="row m-0 p-0">
             <h3 class="col-md-4">{{ board.nome }}</h3>
@@ -87,8 +87,5 @@
         <h5 class="d-flex justify-content-center align-content-center w-100 my-auto">La board è ancora vuota :(</h5>
         {% endif %}
     </div>
-    {% else %}
-          {% include "error.html" %}
-    <!-- <p>No Board Found for id: {{ board_id }} - you may not have sufficient permissions to access this page </p> -->
     {% endif %}
 {% endblock %}

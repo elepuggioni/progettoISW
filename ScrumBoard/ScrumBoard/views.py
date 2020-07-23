@@ -86,7 +86,7 @@ def showcard(request, card_id):
 @login_required(login_url='/login')
 def crea_board(request):
     if request.method == "POST":
-        board_form = add_board(request.user, request.POST)
+        board_form = BoardForm(request.user, request.POST)
         if board_form.is_valid():
             new_board = Board(
                 nome=board_form.cleaned_data['nome'],
@@ -98,7 +98,7 @@ def crea_board(request):
             redirect_to = Board.objects.get(pk=new_board.pk)
             return redirect(redirect_to)
     else:
-        board_form = add_board(request.user)
+        board_form = BoardForm(request.user)
     return render(request, "crea_board.html", {"form": board_form})
 
 
@@ -122,7 +122,7 @@ def aggiungi_card(request, board_id):
                       {"board": board, "is_authorized": is_authorized})
 
     if request.method == "POST":
-        card_form = crea_card_form(board_id, request.POST)
+        card_form = CardForm(board_id, request.POST)
         if card_form.is_valid():
             new_card = Card(
                 nome=card_form.cleaned_data['nome'],
@@ -138,7 +138,7 @@ def aggiungi_card(request, board_id):
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
     else:
-        card_form = crea_card_form(board=board_id)
+        card_form = CardForm(board=board_id)
     return render(request, "aggiungi_card.html", {"board": board, "form": card_form, "is_authorized": is_authorized})
 
 
@@ -200,14 +200,14 @@ def aggiungi_utente(request, board_id):
         return render(request, "aggiungi_utente.html", {"board": board, "is_authorized": is_authorized})
 
     if request.method == "POST":
-        user_form = add_user(request.user, data=request.POST)
+        user_form = UserForm(board, data=request.POST)
         if user_form.is_valid():
             board.partecipanti.set(user_form.cleaned_data['membri'])
 
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
     else:
-        user_form = add_user(request.user, data={'membri': board.partecipanti.all()})
+        user_form = UserForm(board, data={'membri': board.partecipanti.all()})
     return render(request, "aggiungi_utente.html", {"board": board, "form": user_form, "is_authorized": is_authorized})
 
 
@@ -216,7 +216,7 @@ def modifica_board(request, board_id):
     """Modifica il valore del nome della board"""
     board = Board.objects.get(id=board_id)
     if request.method == "POST":
-        board_form = add_board(request.POST)
+        board_form = BoardForm(request.POST)
         if board_form.is_valid():
             board.nome = board_form.cleaned_data('nome')
             board.proprietario = board_form.cleaned_data['proprietario']
@@ -224,7 +224,7 @@ def modifica_board(request, board_id):
             board.partecipanti.set(board_form.cleaned_data['membri'])
             return HttpResponse("Board modificata")
     else:
-        board_form = add_board(data={'nome': board.nome})
+        board_form = BoardForm(data={'nome': board.nome})
     """return render(request, "aggiungi_board.html",
                       {"form": board_form})  # aggiungi_board.html è un placeholder in attesa di quello vero"""
     return render(request, "form_tests/modifica_board_test.html", {'form': board_form})
@@ -303,7 +303,7 @@ def modifica_card(request, card_id):
         is_authorized = True
 
     if request.method == "POST":
-        card_form = crea_card_form(board=board_id, data=request.POST)
+        card_form = CardForm(board=board_id, data=request.POST)
 
         if card_form.is_valid():
             card.nome = card_form.cleaned_data['nome']
@@ -318,7 +318,7 @@ def modifica_card(request, card_id):
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
     else:
-        card_form = crea_card_form(board=board_id, data={'nome': card.nome,
+        card_form = CardForm(board=board_id, data={'nome': card.nome,
                                                          'descrizione': card.descrizione,
                                                          'data_scadenza': card.data_scadenza,
                                                          'story_points': card.story_points,

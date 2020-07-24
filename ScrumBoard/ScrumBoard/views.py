@@ -51,13 +51,14 @@ def crea_board(request):
     if request.method == "POST":
         board_form = BoardForm(request.user, request.POST)
         if board_form.is_valid():
-            new_board = Board(
+            """new_board = Board(
                 nome=board_form.cleaned_data['nome'],
                 proprietario=request.user
             )
             new_board.save()
             new_board.partecipanti.set(board_form.cleaned_data['membri'])
-            new_board.partecipanti.add(request.user)
+            new_board.partecipanti.add(request.user)"""
+            new_board = board_form.salva()
 
             redirect_to = Board.objects.get(pk=new_board.pk)
             return redirect(redirect_to)
@@ -74,9 +75,9 @@ def aggiungi_card(request, board_id):
         raise Http404
 
     if request.method == "POST":
-        card_form = CardForm(board_id, request.POST)
+        card_form = CardForm(board=board, data=request.POST)
         if card_form.is_valid():
-            new_card = Card(
+            """new_card = Card(
                 nome=card_form.cleaned_data['nome'],
                 descrizione=card_form.cleaned_data['descrizione'],
                 data_scadenza=card_form.cleaned_data['data_scadenza'],  # la data di inizio dovrebbe essere automatica
@@ -85,7 +86,8 @@ def aggiungi_card(request, board_id):
 
             )
             new_card.save()
-            new_card.membri.set(card_form.cleaned_data['membri'])
+            new_card.membri.set(card_form.cleaned_data['membri'])"""
+            card_form.salva()
 
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
@@ -102,15 +104,16 @@ def aggiungi_colonna(request, board_id):
         raise Http404
 
     if request.method == "POST":
-        column_form = ColumnForm(request.POST)
+        column_form = ColumnForm(data=request.POST)
         if column_form.is_valid():
-            new_column = Colonna(
+            """new_column = Colonna(
                 nome=column_form.cleaned_data['nome'],
                 board=Board.objects.get(pk=board_id)
-            )
-            new_column.save()
+            )"""
+            board = Board.objects.get(id=board_id)
+            column_form.salva(board)
 
-            redirect_to = Board.objects.get(pk=board_id)
+            redirect_to = board
             return redirect(redirect_to)
             # render commentato per il momento
             # return render(request, "showboard.html", {'board': Board.objects.get(pk=board_id), 'board_id': board_id})
@@ -133,10 +136,11 @@ def aggiungi_utente(request, board_id):
     if request.method == "POST":
         user_form = UserForm(board, data=request.POST)
         if user_form.is_valid():
-            board.partecipanti.set(user_form.cleaned_data['membri'])
-            board.partecipanti.add(request.user)
+            """board.partecipanti.set(user_form.cleaned_data['membri'])
+            board.partecipanti.add(request.user)"""
+            user_form.salva()
 
-            redirect_to = Board.objects.get(pk=board_id)
+            redirect_to = board
             return redirect(redirect_to)
     else:
         user_form = UserForm(board, data={'membri': board.partecipanti.all()})
@@ -171,18 +175,19 @@ def modifica_colonna(request, column_id):
         raise Http404
 
     if request.method == "POST":
-        if 'modifica_nome' in request.POST:  # controllo il "name" nel button per capire quale è stato premuto
-            column_form = ColumnForm(request.POST)
-            if column_form.is_valid():
-                colonna.nome = column_form.cleaned_data['nome']
-                colonna.save()
+        #if 'modifica_nome' in request.POST:  # controllo il "name" nel button per capire quale è stato premuto
+        column_form = ColumnForm(colonna=colonna, data=request.POST)
+        if column_form.is_valid():
+            """colonna.nome = column_form.cleaned_data['nome']
+            colonna.save()"""
+            column_form.salva()
 
-                redirect_to = Board.objects.get(pk=colonna.board_id)
-                return redirect(redirect_to)
+            redirect_to = board
+            return redirect(redirect_to)
         elif 'cancella_colonna' in request.POST:  # controllo il "name" nel button per capire quale è stato premuto
             return cancella_colonna(request, column_id)
     else:
-        column_form = ColumnForm({'nome': colonna.nome})
+        column_form = ColumnForm(colonna=colonna)
         # lista_cards = Card.objects.filter(colonna=column_id)
 
     """return render(request, "form_tests/modifica_colonna.html",
@@ -200,28 +205,31 @@ def modifica_card(request, card_id):
         raise Http404
 
     if request.method == "POST":
-        card_form = CardForm(board=board.id, data=request.POST)
+        #card_form = CardForm(board=board.id, data=request.POST)
+        card_form = CardForm(card=card, data=request.POST)
 
         if card_form.is_valid():
-            card.nome = card_form.cleaned_data['nome']
+            """card.nome = card_form.cleaned_data['nome']
             card.descrizione = card_form.cleaned_data['descrizione']
             card.data_scadenza = card_form.cleaned_data['data_scadenza']
             card.colonna = card_form.cleaned_data['colonna']
             card.story_points = card_form.cleaned_data['story_points']
 
             card.save()
-            card.membri.set(card_form.cleaned_data['membri'])
+            card.membri.set(card_form.cleaned_data['membri'])"""
+            card_form.salva()
 
             redirect_to = Board.objects.get(pk=board.id)
             return redirect(redirect_to)
     else:
-        card_form = CardForm(board=board.id, data={'nome': card.nome,
+        """card_form = CardForm(board=board.id, data={'nome': card.nome,
                                                    'descrizione': card.descrizione,
                                                    'data_scadenza': card.data_scadenza,
                                                    'story_points': card.story_points,
                                                    'colonna': card.colonna,
                                                    'membri': card.membri.all()
-                                                   })
+                                                   })"""
+        card_form = CardForm(card=card)
         # card_form = filtra_colonne(board=board_id,data=card.__dict__)
 
     return render(request, "modifica_card.html", {"form": card_form, "card": card})

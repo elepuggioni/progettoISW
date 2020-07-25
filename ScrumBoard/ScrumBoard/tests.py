@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase, Client, LiveServerTestCase
 from ScrumBoard.models import *
 from django.contrib.auth.models import User
-from utils import get_project_root
+from utils import get_chromedriver_path
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -209,15 +209,13 @@ class ViewsTest(LiveServerTestCase):
         #metterlo in venv nel percorso qua sotto
         #ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
         # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
-        self.selenium = webdriver.Chrome(str(get_project_root()) + r"\venv\Lib\site-packages\selenium\webdriver\chrome\chromedriver.exe")
+        self.selenium = webdriver.Chrome(get_chromedriver_path())
 
         #inizializza qui tutto il test database
-        super(ViewsTest, self).setUp()
 
     #questo metodo chiude il server quando finiscono i test
     def tearDown(self):
         self.selenium.quit()
-        super(ViewsTest, self).tearDown()
 
     def testRegisterLogin(self):
         selenium = self.selenium
@@ -279,11 +277,11 @@ class ViewsTest(LiveServerTestCase):
 
         # controlla che siamo in dashboard
         try:
-            WebDriverWait(selenium, timeout).until(EC.url_contains('dashboard'))
+            WebDriverWait(selenium, timeout).until(EC.url_contains('board'))
         except TimeoutException:
             print("Page took too long to load!")
 
-        assert "Le mie board" in selenium.title
+        assert "BOARD" in selenium.page_source
 
 
 if __name__ == '__main__':

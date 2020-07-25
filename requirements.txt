@@ -3,4 +3,4 @@ django-bootstrap4
 django.jquery
 django-widget-tweaks
 django-bootstrap-datepicker-plus
-selenium>=3.141.59
+selenium==4.0.0a6.post2

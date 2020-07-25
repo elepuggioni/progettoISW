@@ -317,8 +317,8 @@ class ViewsTest(LiveServerTestCase):
         assert 'La board è ancora vuota :(' in selenium.page_source
         assert new_board_name in selenium.page_source
 
-        new_coumn_button = selenium.find_element(By.ID, 'add_column')
-        new_coumn_button.click()        # entro nella pagina di aggiunta colonna
+        add_column_button = selenium.find_element(By.ID, 'add_column')
+        add_column_button.click()        # entro nella pagina di aggiunta colonna
 
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'submit_new_column')))
@@ -340,14 +340,57 @@ class ViewsTest(LiveServerTestCase):
         submit.click()  # invio nuova colonna
 
         try:
-            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'submit_new_column')))
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))   # pulsante aggiungi colonna su showboard
         except TimeoutException:
-            print("timeout entrata pagina aggiunta colonna")
+            print("timeout ritorno pagina board dopo aggiunta colonna")
 
         # controlla che siamo tornati dentro board detail con la nuova colonna dentro
 
         assert "Board Detail" in selenium.title
         assert new_column_name in selenium.page_source
+
+        add_card_button = selenium.find_element(By.ID, 'add_card')
+        add_card_button.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_descrizione')))
+        except TimeoutException:
+            print("timeout entrata pagina aggiunta card")
+
+        # controlla che siamo entrati nella pagina di aggiunta card
+
+        assert "Aggiunta card" in selenium.title
+        assert "Nome card:" in selenium.page_source
+
+        # preparo card da aggiungere
+        new_card_name = "Card 1"
+        new_card_description = "Test descrizione card 1"
+        new_card_storypoints= 2
+        new_card_column = new_column_name
+
+        new_card_name_input = selenium.find_element(By.ID, 'id_nome')
+        new_card_description_input = selenium.find_element(By.ID, 'id_descrizione')
+        new_card_storypoints_input =  selenium.find_element(By.ID, 'id_story_points')
+        new_card_column_input = selenium.find_element(By.ID, 'id_colonna')
+
+        # riempio i campi
+        new_card_name_input.send_keys(new_card_name)
+        new_card_description_input.send_keys(new_card_description)
+        new_card_storypoints_input.send_keys(new_card_storypoints)
+        new_card_column_input.send_keys(new_card_column)
+
+        submit = selenium.find_element(By.ID, 'submit_new_card')
+        submit.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))   # pulsante aggiungi colonna su showboard
+        except TimeoutException:
+            print("timeout ritorno pagina board dopo aggiunta card")
+
+        assert "Board Detail" in selenium.title
+        assert new_card_name in selenium.page_source
+        assert new_card_description in selenium.page_source
+
 
         # time.sleep(5)
 

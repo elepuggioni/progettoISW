@@ -220,6 +220,9 @@ class ViewsTest(LiveServerTestCase):
 
     def testRegisterLogin(self):
         selenium = self.selenium
+        total_cards = 0
+        total_story_points = 0
+
 
         # apre la pagina register
         selenium.get(self.live_server_url + '/register')
@@ -340,7 +343,7 @@ class ViewsTest(LiveServerTestCase):
         submit.click()  # invio nuova colonna
 
         try:
-            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))   # pulsante aggiungi colonna su showboard
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
         except TimeoutException:
             print("timeout ritorno pagina board dopo aggiunta colonna")
 
@@ -365,7 +368,7 @@ class ViewsTest(LiveServerTestCase):
         # preparo card da aggiungere
         new_card_name = "Card 1"
         new_card_description = "Test descrizione card 1"
-        new_card_storypoints= 2
+        new_card_storypoints= 3
         new_card_column = new_column_name
 
         new_card_name_input = selenium.find_element(By.ID, 'id_nome')
@@ -376,21 +379,43 @@ class ViewsTest(LiveServerTestCase):
         # riempio i campi
         new_card_name_input.send_keys(new_card_name)
         new_card_description_input.send_keys(new_card_description)
+        new_card_storypoints_input.clear()  # serve per togliere lo 0 iniziale ed evitare che un 3 diventi 30
         new_card_storypoints_input.send_keys(new_card_storypoints)
         new_card_column_input.send_keys(new_card_column)
 
         submit = selenium.find_element(By.ID, 'submit_new_card')
         submit.click()
 
+        total_cards += 1
+        total_story_points += new_card_storypoints
+
         try:
-            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))   # pulsante aggiungi colonna su showboard
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
         except TimeoutException:
             print("timeout ritorno pagina board dopo aggiunta card")
 
+        # controlla che siamo entrati nella pagina di burndown
         assert "Board Detail" in selenium.title
         assert new_card_name in selenium.page_source
         assert new_card_description in selenium.page_source
 
+        burndown_button = selenium.find_element(By.ID, 'burndown')
+        burndown_button.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'burndown_title')))
+        except TimeoutException:
+            print("timeout entrata pagina burndown")
+
+        storypoints_total_field = int(selenium.find_element(By.ID, 'storypoints_total').text)   # prendo gli story points visualizzati nella pagina
+        cards_total_field = int(selenium.find_element(By.ID, 'cards_total').text)   # prendo le cards visualizzate nella pagina
+
+        assert "Burndown" in selenium.title
+        assert "Burndown" in selenium.page_source
+        assert new_board_name in selenium.page_source
+
+        self.assertEqual(storypoints_total_field, total_story_points)   # confronto storypoints visualizzati con quelli sommati qui nei test
+        self.assertEqual(cards_total_field, total_cards)    # confronto cards visualizzate con quelle sommate qui nei test
 
         # time.sleep(5)
 

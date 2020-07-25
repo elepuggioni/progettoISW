@@ -1,23 +1,18 @@
 import unittest
 import datetime
-from django.test import TestCase, Client
+from django.test import TestCase, Client, LiveServerTestCase
 from ScrumBoard.models import *
 from django.contrib.auth.models import User
-from ScrumBoard.forms import add_board
-
-
-class ViewTest(TestCase):
-
-    def setUp(self):
-        self.client = Client()
-
-    def testHelloWorldView(self):
-        response = self.client.get('/hello/')
-        self.assertContains(response, "Hello world")
+from utils import get_project_root
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.keys import Keys
 
 
 class ModelTest(TestCase):
-
     def setUp(self):
         # inizializzazione client
         self.client = Client()
@@ -188,7 +183,7 @@ class ModelTest(TestCase):
         for board in self.boards:
             if (board.partecipanti == self.utenti[0]):
                 self.assertContains(response, board.nome)
-
+"""
     def testShowBoard(self):
         # self.assertTrue(self.client.login(username='Utente1', password='admin'))
 
@@ -198,13 +193,97 @@ class ModelTest(TestCase):
             for card in Card.objects.filter(colonna=colonna):
                 self.assertContains(response, card.nome)
 
-    """def testCreaBoardViewGet(self):
+    def testCreaBoardViewGet(self):
         response = self.client.get('/dashboard/crea_board')
         self.assertIsInstance(response.context['fo  rm'], BoardForm)
 
     def testCreaBoardPost(self):
         response = self.client.post('/dashboard/crea_board', {'nome':'testpipo'})
         print(response.context['nome'])"""
+
+
+class ViewsTest(LiveServerTestCase):
+    def setUp(self):
+        #dovete scaricare il driver del browser corrispondente (chrome in questo caso)
+        #da https://sites.google.com/a/chromium.org/chromedriver/downloads
+        #metterlo in venv nel percorso qua sotto
+        #ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
+        # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
+        self.selenium = webdriver.Chrome(str(get_project_root()) + r"\venv\Lib\site-packages\selenium\webdriver\chrome\chromedriver.exe")
+
+        #inizializza qui tutto il test database
+        super(ViewsTest, self).setUp()
+
+    #questo metodo chiude il server quando finiscono i test
+    def tearDown(self):
+        self.selenium.quit()
+        super(ViewsTest, self).tearDown()
+
+    def testRegisterLogin(self):
+        selenium = self.selenium
+
+        # apre la pagina register
+        selenium.get(self.live_server_url + '/register')
+
+        # aspetta che gli elementi vengano caricati prima di cercarli, se ci mette più
+        # di 5 secondi lancia un'eccezione
+        timeout = 5
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'password1')))
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'password2')))
+            WebDriverWait(selenium, timeout).until(EC.element_to_be_clickable((By.ID, 'submit')))
+        except TimeoutException:
+            print("Page took too long to load!")
+
+        assert 'Registrati' in selenium.title
+        assert 'scrumboard' in selenium.page_source
+
+        # cerca gli elementi nella pagina
+        username = selenium.find_element(By.NAME, 'username')
+        password1 = selenium.find_element(By.NAME, 'password1')
+        password2 = selenium.find_element(By.NAME, 'password2')
+        submit = selenium.find_element(By.ID, 'submit')
+
+        # inserisce le credenziali
+        username.send_keys('Utente1')
+        password1.send_keys('Admin1')
+        password2.send_keys('Admin1')
+        submit.click()
+
+        #aspetta che la pagina cambi
+        try:
+            WebDriverWait(selenium, timeout).until(EC.url_contains('login'))
+        except TimeoutException:
+            print("Page took too long to load!")
+        assert "Login" in selenium.title
+        assert "successo" in selenium.page_source
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'password')))
+            WebDriverWait(selenium, timeout).until(EC.element_to_be_clickable((By.ID, 'submit')))
+        except TimeoutException:
+            print("Page took too long to load!")
+
+        assert 'Login' in selenium.title
+        assert 'scrumboard' in selenium.page_source
+
+        username = selenium.find_element(By.ID, 'username')
+        password = selenium.find_element(By.ID, 'password')
+        submit = selenium.find_element(By.ID, 'submit')
+
+        username.send_keys('Utente1')
+        password.send_keys('Admin1')
+        submit.click()
+
+        # controlla che siamo in dashboard
+        try:
+            WebDriverWait(selenium, timeout).until(EC.url_contains('dashboard'))
+        except TimeoutException:
+            print("Page took too long to load!")
+
+        assert "Le mie board" in selenium.title
 
 
 if __name__ == '__main__':

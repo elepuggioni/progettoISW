@@ -1,3 +1,4 @@
+import time
 import unittest
 import datetime
 from django.test import TestCase, Client, LiveServerTestCase
@@ -209,7 +210,7 @@ class ViewsTest(LiveServerTestCase):
         #metterlo in venv nel percorso qua sotto
         #ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
         # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
-        self.selenium = webdriver.Chrome(get_chromedriver_path())
+        self.selenium = webdriver.Chrome(executable_path=get_chromedriver_path())
 
         #inizializza qui tutto il test database
 
@@ -276,12 +277,79 @@ class ViewsTest(LiveServerTestCase):
         submit.click()
 
         # controlla che siamo in dashboard
-        try:
-            WebDriverWait(selenium, timeout).until(EC.url_contains('board'))
-        except TimeoutException:
-            print("Page took too long to load!")
 
         assert "BOARD" in selenium.page_source
+        assert "Le mie board" in selenium.title
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'aggiungi_board')))
+        except TimeoutException:
+            print("timeout entrata pagina dashboard")
+
+        add_board = selenium.find_element(By.ID, 'aggiungi_board')
+        add_board.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_nome')))
+        except TimeoutException:
+            print("timeout entrata pagina crazione board")
+
+        # controlla che siamo dentro aggiunta board
+
+        assert 'Aggiunta board' in selenium.title
+
+        board_name_input = selenium.find_element(By.ID, 'id_nome')
+        submit = selenium.find_element(By.ID, 'submit_new_board') # stesso di sopra
+
+        new_board_name = "Board 1"
+        board_name_input.send_keys(new_board_name)
+        # time.sleep(1)
+        submit.click()          # aggiungo nuova board
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
+        except TimeoutException:
+            print("timeout entrata pagina board")
+
+        # controlla che siamo dentro board detail
+
+        assert "Board Detail" in selenium.title     # vado alla nuova board
+        assert 'La board è ancora vuota :(' in selenium.page_source
+        assert new_board_name in selenium.page_source
+
+        new_coumn_button = selenium.find_element(By.ID, 'add_column')
+        new_coumn_button.click()        # entro nella pagina di aggiunta colonna
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'submit_new_column')))
+        except TimeoutException:
+            print("timeout entrata pagina aggiunta colonna")
+
+        # controlla che siamo dentro aggiunta colonna
+
+        assert 'Aggiunta colonna' in selenium.title
+        assert 'Nome colonna:' in selenium.page_source
+
+        new_column_name = "Colonna 1"
+        submit = selenium.find_element(By.ID, 'submit_new_column')
+        new_column_name_input = selenium.find_element(By.ID, 'id_nome')
+        new_column_name_input.send_keys(new_column_name)
+
+        # time.sleep(1)
+
+        submit.click()  # invio nuova colonna
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'submit_new_column')))
+        except TimeoutException:
+            print("timeout entrata pagina aggiunta colonna")
+
+        # controlla che siamo tornati dentro board detail con la nuova colonna dentro
+
+        assert "Board Detail" in selenium.title
+        assert new_column_name in selenium.page_source
+
+        # time.sleep(5)
 
 
 if __name__ == '__main__':

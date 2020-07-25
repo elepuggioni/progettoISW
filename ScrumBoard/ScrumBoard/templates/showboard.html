@@ -6,12 +6,12 @@
       {% if board %}
     <div class="container m-0 p-0">
         <div class="row m-0 p-0">
-            <h3 class="col-md-4">{{ board.nome }}</h3>
+            <h3 class="col-md-4" id="board_name">{{ board.nome }}</h3>
             <div class="col-md-8 d-flex justify-content-end">
-            <a href="/board/{{ board_id }}/aggiungi_utente" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Utente</a>
-            <a href="/board/{{ board_id }}/aggiungi_colonna" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Colonna</a>
-            <a href="/board/{{ board_id }}/aggiungi_card" class="col btn btn-outline-info board-button align-self-center" >Aggiungi Card</a>
-                <a href="../../burndown/{{ board_id }}" class="col btn btn-outline-info board-button align-self-center">Burndown</a>
+            <a href="/board/{{ board_id }}/aggiungi_utente" class="col btn btn-outline-info board-button align-self-center" id="add_user">Aggiungi Utente</a>
+            <a href="/board/{{ board_id }}/aggiungi_colonna" class="col btn btn-outline-info board-button align-self-center" id="add_column" >Aggiungi Colonna</a>
+            <a href="/board/{{ board_id }}/aggiungi_card" class="col btn btn-outline-info board-button align-self-center" id="add_card">Aggiungi Card</a>
+                <a href="../../burndown/{{ board_id }}" class="col btn btn-outline-info board-button align-self-center" id="burndown">Burndown</a>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@
         {% endfor %}
 
         {% else %}
-        <h5 class="d-flex justify-content-center align-content-center w-100 my-auto">La board è ancora vuota :(</h5>
+        <h5 class="d-flex justify-content-center align-content-center w-100 my-auto" id="empty_board">La board è ancora vuota :(</h5>
         {% endif %}
     </div>
     {% endif %}

@@ -220,16 +220,29 @@ class ViewsTest(LiveServerTestCase):
 
     def testRegisterLogin(self):
         selenium = self.selenium
+        timeout = 5
         total_cards = 0
         total_story_points = 0
 
+        selenium.get(self.live_server_url + '/') # apro la pagina root del sito
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.url_contains('login'))
+        except TimeoutException:
+            print("Timeout all'apertura del sito e redirect a login")
+
+        assert "Login" in selenium.title    # verifico che il redirect da root a login funzioni correttamente
+        assert "Username..." in selenium.page_source
+        assert "Password..." in selenium.page_source
 
         # apre la pagina register
-        selenium.get(self.live_server_url + '/register')
+        signup_link = selenium.find_element(By.ID, 'signup')
+        signup_link.click()
+        #selenium.get(self.live_server_url + '/register')   # ho sostituito con la pagina di login e click a register per implementare un test aggiuntivo all'inizio
 
         # aspetta che gli elementi vengano caricati prima di cercarli, se ci mette più
         # di 5 secondi lancia un'eccezione
-        timeout = 5
+
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'password1')))

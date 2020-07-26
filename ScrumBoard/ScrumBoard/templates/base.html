@@ -36,7 +36,7 @@
                     <p class="text-center my-auto text-white">Benvenuto, {{user.username}}</p>
                 </div>
                 <div class="col">
-                     <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+                     <a href="{% url 'logout' %}" id="logout_button" class="btn btn-outline-light">Logout</a>
                 </div>
                 {% elif request.path == login %}
                 <div class="col-11">

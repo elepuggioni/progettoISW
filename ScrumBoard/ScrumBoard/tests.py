@@ -311,6 +311,7 @@ class ViewsTest(LiveServerTestCase):
     def test2DashBoard(self):
         selenium = self.selenium
         total_cards = 0
+        total_columns = 0
         total_story_points = 0
         total_boards = 0
 
@@ -379,7 +380,7 @@ class ViewsTest(LiveServerTestCase):
         new_column_name_input.send_keys(new_column_name)
 
         # time.sleep(1)
-
+        total_columns += 1
         submit.click()  # invio nuova colonna
 
         try:
@@ -435,6 +436,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout ritorno pagina board dopo aggiunta card")
 
         # controlla che siamo entrati nella pagina di burndown
+
         assert "Board Detail" in selenium.title
         assert new_card_name in selenium.page_source
         assert new_card_description in selenium.page_source
@@ -469,12 +471,15 @@ class ViewsTest(LiveServerTestCase):
             print("timeout ritorno pagina board dopo burndown")
 
         # controlla che siamo tornati dentro board detail dopo burndown
+
         assert "Board Detail" in selenium.title
         assert new_column_name in selenium.page_source
 
         edit_card_icon = selenium.find_element(By.ID,
                                                'edit_card_icon_1')  # seleziono la prima card creata, nel caso siano presenti più di una
         edit_card_icon.click()  # entro in modifica card
+
+        # controlla che siamo entrati in modifica card
 
         assert "Modifica card" in selenium.title
         assert "modifica_card" in selenium.current_url
@@ -499,7 +504,8 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("timeout tornando in pagina board da modifica card")
 
-        # controlla che siamo tornati dentro board detail dopo burndown
+        # controlla che siamo tornati dentro board detail da modifica card
+
         assert "Board Detail" in selenium.title
         assert new_column_name in selenium.page_source
         assert edited_card_name in selenium.page_source
@@ -515,6 +521,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina modifica colonna")
 
         # controlla che siamo nella pagina di modifica colonna
+
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
         assert new_column_name in selenium.page_source
@@ -533,6 +540,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina modifica colonna dopo cancellazione card")
 
         # controlla che siamo nella pagina di modifica colonna
+
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
         assert new_column_name in selenium.page_source
@@ -553,9 +561,29 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("timeout tornando in pagina board da modifica colonna")
 
-        # controlla che siamo tornati dentro board detail dopo burndown
+        # controlla che siamo tornati dentro board detail da modifica colonna
+
         assert "Board Detail" in selenium.title
         assert edited_column_name in selenium.page_source
+        assert edited_card_name not in selenium.page_source  # card cancellata prima
+        assert edited_card_description not in selenium.page_source  # card cancellata prima
+
+        delete_column_icon = selenium.find_element(By.ID, 'delete_column_icon_1')
+        delete_column_icon.click()
+        selenium.switch_to.alert.accept()  # accetto l'ok dall'alert javascript
+
+        total_columns -= 1
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
+        except TimeoutException:
+            print("timeout tornando in pagina board da modifica colonna")
+
+        # controlla che siamo tornati dentro board dopo cancellazione colonna
+
+        assert "Board Detail" in selenium.title
+        assert 'La board è ancora vuota :(' in selenium.page_source
+        assert edited_column_name not in selenium.page_source
         assert edited_card_name not in selenium.page_source  # card cancellata prima
         assert edited_card_description not in selenium.page_source  # card cancellata prima
 
@@ -590,6 +618,7 @@ class ViewsTest(LiveServerTestCase):
 
         time.sleep(1)
 
+    # metodo per fare il login senza ripetere il codice ogni volta
     def login(self, selenium, timeout):
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))

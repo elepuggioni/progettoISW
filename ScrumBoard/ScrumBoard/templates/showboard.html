@@ -27,7 +27,7 @@
                     <a href="{{ colonna.get_absolute_url }}" id="column_name_link_{{ colonna.id }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
                 </div>
                 <div class="col-2 p-0 m-0 justify-content-end">
-                    <a href="/cancella_colonna/{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
+                    <a href="/cancella_colonna/{{ colonna.id }}" id="delete_column_icon_{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
                         <img src="/static/media/delete.png" alt="edit" height="15px" width="16px">
                     </a>
                 </div>

@@ -33,10 +33,10 @@
                                         <a href="{{ card.get_absolute_url }}" style="max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
                                     </div>
                                     <div class="col-1 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/cancella_card/{{ card.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa card?');"><img src="/static/media/delete.png" alt="edit" height="16px" width="16px"></a>
+                                        <a href="/cancella_card/{{ card.id }}" id="delete_card_icon_{{ card.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa card?');"><img src="/static/media/delete.png" alt="edit" height="16px" width="16px"></a>
                                     </div>
                                     <div class="col-1 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a>
+                                        <a href="/modifica_card/{{ card.id }}" id="edit_card_icon_{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a>
                                     </div>
                                 </div>
                             </div>

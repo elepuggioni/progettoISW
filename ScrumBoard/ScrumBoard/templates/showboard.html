@@ -24,7 +24,7 @@
         <div class="col board-column scrollbar-info border rounded border-success px-0 mx-1 d-flex align-items-start d-flex justify-content-center">
             <div class="row justify-content-end w-100">
                 <div class="col-8 col_title p-0 m-0 d-flex justify-content-center">
-                    <a href="{{ colonna.get_absolute_url }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
+                    <a href="{{ colonna.get_absolute_url }}" id="column_name_link_{{ colonna.id }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
                 </div>
                 <div class="col-2 p-0 m-0 justify-content-end">
                     <a href="/cancella_colonna/{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
@@ -42,7 +42,7 @@
                                         <a href="{{ card.get_absolute_url }}" style="max-width:95%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
                                     </div>
                                     <div class="col-2 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/modifica_card/{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a></div>
+                                        <a href="/modifica_card/{{ card.id }}" id="edit_card_icon_{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a></div>
                                     <hr>
                                 </div>
                             </div>

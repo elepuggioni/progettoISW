@@ -223,6 +223,7 @@ class ViewsTest(LiveServerTestCase):
         timeout = 5
         total_cards = 0
         total_story_points = 0
+        total_boards = 0
 
         selenium.get(self.live_server_url + '/') # apro la pagina root del sito
 
@@ -319,6 +320,7 @@ class ViewsTest(LiveServerTestCase):
 
         new_board_name = "Board 1"
         board_name_input.send_keys(new_board_name)
+        total_boards += 1
         # time.sleep(1)
         submit.click()          # aggiungo nuova board
 
@@ -422,6 +424,7 @@ class ViewsTest(LiveServerTestCase):
 
         storypoints_total_field = int(selenium.find_element(By.ID, 'storypoints_total').text)   # prendo gli story points visualizzati nella pagina
         cards_total_field = int(selenium.find_element(By.ID, 'cards_total').text)   # prendo le cards visualizzate nella pagina
+        back_button = selenium.find_element(By.ID, 'back_button')
 
         assert "Burndown" in selenium.title
         assert "Burndown" in selenium.page_source
@@ -430,7 +433,53 @@ class ViewsTest(LiveServerTestCase):
         self.assertEqual(storypoints_total_field, total_story_points)   # confronto storypoints visualizzati con quelli sommati qui nei test
         self.assertEqual(cards_total_field, total_cards)    # confronto cards visualizzate con quelle sommate qui nei test
 
-        # time.sleep(5)
+        back_button.click()     #   torno indietro a showboard
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
+        except TimeoutException:
+            print("timeout ritorno pagina board dopo burndown")
+
+        # controlla che siamo tornati dentro board detail dopo burndown
+        assert "Board Detail" in selenium.title
+        assert new_column_name in selenium.page_source
+
+        edit_card_icon = selenium.find_element(By.ID, 'edit_card_icon_1')  # seleziono la prima card creata, nel caso siano presenti più di una
+        edit_card_icon.click()  # entro in modifica card
+
+        assert "Modifica card" in selenium.title
+        assert "modifica_card" in selenium.current_url
+        assert new_card_name in selenium.page_source
+        assert new_card_description in selenium.page_source
+
+        edited_card_name = new_card_name + " edit"
+        edited_card_description = new_card_description + " edit"
+        edit_card_name_field = selenium.find_element(By.ID, 'id_nome')
+        edit_card_description_field = selenium.find_element(By.ID, 'id_descrizione')
+        submit = selenium.find_element(By.ID, 'submit_edited_card')
+
+        edit_card_name_field.clear()    # pulisco il campo prima di cambiarlo
+        edit_card_description_field.clear()     # pulisco il campo prima di cambiarlo
+
+        edit_card_name_field.send_keys(edited_card_name)
+        edit_card_description_field.send_keys(edited_card_description)
+        submit.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
+        except TimeoutException:
+            print("timeout tornando in pagina board")
+
+        time.sleep(3)
+
+        # controlla che siamo tornati dentro board detail dopo burndown
+        assert "Board Detail" in selenium.title
+        assert new_column_name in selenium.page_source
+        assert edited_card_name in selenium.page_source
+        assert edited_card_description in selenium.page_source
+
+
+        time.sleep(3)
 
 
 if __name__ == '__main__':

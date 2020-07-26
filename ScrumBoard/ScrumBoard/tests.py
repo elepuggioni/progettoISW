@@ -468,9 +468,7 @@ class ViewsTest(LiveServerTestCase):
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
         except TimeoutException:
-            print("timeout tornando in pagina board")
-
-        time.sleep(3)
+            print("timeout tornando in pagina board da modifica card")
 
         # controlla che siamo tornati dentro board detail dopo burndown
         assert "Board Detail" in selenium.title
@@ -478,6 +476,57 @@ class ViewsTest(LiveServerTestCase):
         assert edited_card_name in selenium.page_source
         assert edited_card_description in selenium.page_source
 
+        column_name_link = selenium.find_element(By.ID, 'column_name_link_1')  # seleziono la prima colonna creata, nel caso siano presenti più di una
+        column_name_link.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_nome')))
+        except TimeoutException:
+            print("timeout entrata pagina modifica colonna")
+
+        # controlla che siamo nella pagina di modifica colonna
+        assert "Modifica colonna" in selenium.title
+        assert "modifica_colonna" in selenium.current_url
+        assert new_column_name in selenium.page_source
+        assert edited_card_name in selenium.page_source
+        assert edited_card_description in selenium.page_source
+
+        delete_card_icon = selenium.find_element(By.ID, 'delete_card_icon_1')  # seleziono la prima card creata, nel caso siano presenti più di una
+        delete_card_icon.click()  # entro in modifica card
+        selenium.switch_to.alert.accept()  # accetto l'ok dall'alert javascript
+        total_cards -= 1
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_nome')))
+        except TimeoutException:
+            print("timeout entrata pagina modifica colonna dopo cancellazione card")
+
+        # controlla che siamo nella pagina di modifica colonna
+        assert "Modifica colonna" in selenium.title
+        assert "modifica_colonna" in selenium.current_url
+        assert new_column_name in selenium.page_source
+        assert edited_card_name not in selenium.page_source
+        assert edited_card_description not in selenium.page_source
+
+        edited_column_name = new_column_name + " edit"
+        edit_column_name_field = selenium.find_element(By.ID, 'id_nome')
+        submit = selenium.find_element(By.ID, 'submit_edited_column')
+
+        edit_column_name_field.clear()
+        edit_column_name_field.send_keys(edited_column_name)
+
+        submit.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
+        except TimeoutException:
+            print("timeout tornando in pagina board da modifica colonna")
+
+        # controlla che siamo tornati dentro board detail dopo burndown
+        assert "Board Detail" in selenium.title
+        assert edited_column_name in selenium.page_source
+        assert edited_card_name not in selenium.page_source # card cancellata prima
+        assert edited_card_description not in selenium.page_source # card cancellata prima
 
         time.sleep(3)
 

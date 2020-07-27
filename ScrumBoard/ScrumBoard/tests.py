@@ -1,4 +1,5 @@
 import datetime
+import os
 import time
 import unittest
 
@@ -217,15 +218,24 @@ class ViewsTest(LiveServerTestCase):
         # ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
         # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
         self.selenium = webdriver.Chrome(executable_path=get_chromedriver_path())
-        self.user = User.objects.create_user(username="Utente1", password="Admin1")
-
         # inizializza qui tutto il test database
+        self.premade_user = User.objects.create_user(username="Utente1", password="Admin1")
+        self.new_user = User.objects.create_user(username="Utente_nuovo", password="Admin1") # per aggiunta alla board
+        self.premade_board = Board.objects.create(nome='Board1', proprietario=self.premade_user)
+        self.premade_colonna = Colonna.objects.create(nome='Colonna1', board=self.premade_board)
+        self.premade_card = Card.objects.create(nome="Prova",
+                                                descrizione="Carta di prova",
+                                                story_points="5",
+                                                data_scadenza=datetime.date.today() - datetime.timedelta(days=3),
+                                                colonna=self.premade_colonna)
+
+        self.premade_board.partecipanti.add(self.premade_user)
 
     # questo metodo chiude il server quando finiscono i test
     def tearDown(self):
         self.selenium.quit()
 
-    def test1RegisterLogin(self):
+    def test1RegisterLoginLogout(self):
         selenium = self.selenium
 
         selenium.get(self.live_server_url + '/')  # apro la pagina root del sito
@@ -306,14 +316,22 @@ class ViewsTest(LiveServerTestCase):
         assert "BOARD" in selenium.page_source
         assert "Le mie board" in selenium.title
 
+        logout_button = selenium.find_element(By.ID, 'logout_button')
+        logout_button.click()
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
+        except TimeoutException:
+            print("timeout entrata pagina dashboard")
+
+        assert "Login" in selenium.title
+        assert "login" in selenium.current_url
+        assert "Non hai un account?" in selenium.page_source
+
         time.sleep(1)
 
-    def test2DashBoard(self):
+    def test2DashBoardAddBoard(self):
         selenium = self.selenium
-        total_cards = 0
-        total_columns = 0
-        total_story_points = 0
-        total_boards = 0
 
         selenium.get(self.live_server_url + '/')
 
@@ -328,6 +346,7 @@ class ViewsTest(LiveServerTestCase):
 
         assert "BOARD" in selenium.page_source
         assert "Le mie board" in selenium.title
+        assert self.premade_board.nome in selenium.page_source  # controllo che la board creata in fase di setup sia visualizzata
 
         add_board = selenium.find_element(By.ID, 'aggiungi_board')
         add_board.click()
@@ -344,10 +363,8 @@ class ViewsTest(LiveServerTestCase):
         board_name_input = selenium.find_element(By.ID, 'id_nome')
         submit = selenium.find_element(By.ID, 'submit_new_board')  # stesso di sopra
 
-        new_board_name = "Board 1"
+        new_board_name = "Board 2"
         board_name_input.send_keys(new_board_name)
-        total_boards += 1
-        # time.sleep(1)
         submit.click()  # aggiungo nuova board
 
         try:
@@ -360,6 +377,16 @@ class ViewsTest(LiveServerTestCase):
         assert "Board Detail" in selenium.title  # vado alla nuova board
         assert 'La board è ancora vuota :(' in selenium.page_source
         assert new_board_name in selenium.page_source
+
+        time.sleep(1)
+
+    def test3AddColumn(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
 
         add_column_button = selenium.find_element(By.ID, 'add_column')
         add_column_button.click()  # entro nella pagina di aggiunta colonna
@@ -380,7 +407,7 @@ class ViewsTest(LiveServerTestCase):
         new_column_name_input.send_keys(new_column_name)
 
         # time.sleep(1)
-        total_columns += 1
+        # total_columns += 1
         submit.click()  # invio nuova colonna
 
         try:
@@ -391,7 +418,18 @@ class ViewsTest(LiveServerTestCase):
         # controlla che siamo tornati dentro board detail con la nuova colonna dentro
 
         assert "Board Detail" in selenium.title
-        assert new_column_name in selenium.page_source
+        assert self.premade_colonna.nome in selenium.page_source # controllo che la colonna creata in fase di setup sia presente
+        assert new_column_name in selenium.page_source  # controllo che la nuova colonna sia presente
+
+        time.sleep(1)
+
+    def test4AddCard(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
 
         add_card_button = selenium.find_element(By.ID, 'add_card')
         add_card_button.click()
@@ -407,10 +445,10 @@ class ViewsTest(LiveServerTestCase):
         assert "Nome card:" in selenium.page_source
 
         # preparo card da aggiungere
-        new_card_name = "Card 1"
-        new_card_description = "Test descrizione card 1"
+        new_card_name = "Card 2"
+        new_card_description = "Test descrizione card 2"
         new_card_storypoints = 3
-        new_card_column = new_column_name
+        new_card_column = self.premade_colonna.nome
 
         new_card_name_input = selenium.find_element(By.ID, 'id_nome')
         new_card_description_input = selenium.find_element(By.ID, 'id_descrizione')
@@ -427,19 +465,27 @@ class ViewsTest(LiveServerTestCase):
         submit = selenium.find_element(By.ID, 'submit_new_card')
         submit.click()
 
-        total_cards += 1
-        total_story_points += new_card_storypoints
-
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
         except TimeoutException:
             print("timeout ritorno pagina board dopo aggiunta card")
 
-        # controlla che siamo entrati nella pagina di burndown
+        # controlla che siamo in board detail
 
         assert "Board Detail" in selenium.title
-        assert new_card_name in selenium.page_source
+        assert self.premade_card.nome in selenium.page_source  # controllo che la card creata in fase di setup sia presente
+        assert new_card_name in selenium.page_source  # controlla che la nuova card sia presente
         assert new_card_description in selenium.page_source
+
+        time.sleep(1)
+
+    def test5Burndown(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
 
         burndown_button = selenium.find_element(By.ID, 'burndown')
         burndown_button.click()
@@ -457,11 +503,12 @@ class ViewsTest(LiveServerTestCase):
 
         assert "Burndown" in selenium.title
         assert "Burndown" in selenium.page_source
-        assert new_board_name in selenium.page_source
+        assert "burndown" in selenium.current_url
+        assert self.premade_board.nome in selenium.page_source
 
-        self.assertEqual(storypoints_total_field,
-                         total_story_points)  # confronto storypoints visualizzati con quelli sommati qui nei test
-        self.assertEqual(cards_total_field, total_cards)  # confronto cards visualizzate con quelle sommate qui nei test
+        self.assertEqual(storypoints_total_field, int(
+            self.premade_card.story_points))  # confronto storypoints visualizzati con quelli sommati qui nei test
+        self.assertEqual(cards_total_field, 1)  # confronto cards visualizzate con quelle sommate qui nei test
 
         back_button.click()  # torno indietro a showboard
 
@@ -473,21 +520,33 @@ class ViewsTest(LiveServerTestCase):
         # controlla che siamo tornati dentro board detail dopo burndown
 
         assert "Board Detail" in selenium.title
-        assert new_column_name in selenium.page_source
+        assert self.premade_colonna.nome in selenium.page_source
+        assert self.premade_card.nome in selenium.page_source
+
+        time.sleep(1)
+
+    def test6EditCard(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
 
         edit_card_icon = selenium.find_element(By.ID,
-                                               'edit_card_icon_1')  # seleziono la prima card creata, nel caso siano presenti più di una
+                                               'edit_card_icon_' + str(
+                                                   self.premade_card.id))  # seleziono la prima card creata, nel caso siano presenti più di una
         edit_card_icon.click()  # entro in modifica card
 
         # controlla che siamo entrati in modifica card
 
         assert "Modifica card" in selenium.title
         assert "modifica_card" in selenium.current_url
-        assert new_card_name in selenium.page_source
-        assert new_card_description in selenium.page_source
+        assert self.premade_card.nome in selenium.page_source
+        assert self.premade_card.descrizione in selenium.page_source
 
-        edited_card_name = new_card_name + " edit"
-        edited_card_description = new_card_description + " edit"
+        edited_card_name = self.premade_card.nome + " edit"
+        edited_card_description = self.premade_card.descrizione + " edit"
         edit_card_name_field = selenium.find_element(By.ID, 'id_nome')
         edit_card_description_field = selenium.find_element(By.ID, 'id_descrizione')
         submit = selenium.find_element(By.ID, 'submit_edited_card')
@@ -507,12 +566,23 @@ class ViewsTest(LiveServerTestCase):
         # controlla che siamo tornati dentro board detail da modifica card
 
         assert "Board Detail" in selenium.title
-        assert new_column_name in selenium.page_source
+        assert self.premade_colonna.nome in selenium.page_source
         assert edited_card_name in selenium.page_source
         assert edited_card_description in selenium.page_source
 
+        time.sleep(1)
+
+    def test7DeleteCard(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
+
         column_name_link = selenium.find_element(By.ID,
-                                                 'column_name_link_1')  # seleziono la prima colonna creata, nel caso siano presenti più di una
+                                                 'column_name_link_' + str(
+                                                     self.premade_colonna.id))  # seleziono la prima colonna creata, nel caso siano presenti più di una
         column_name_link.click()
 
         try:
@@ -524,15 +594,15 @@ class ViewsTest(LiveServerTestCase):
 
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
-        assert new_column_name in selenium.page_source
-        assert edited_card_name in selenium.page_source
-        assert edited_card_description in selenium.page_source
+        assert self.premade_colonna.nome in selenium.page_source
+        assert self.premade_card.nome in selenium.page_source
+        assert self.premade_card.descrizione in selenium.page_source
 
         delete_card_icon = selenium.find_element(By.ID,
-                                                 'delete_card_icon_1')  # seleziono la prima card creata, nel caso siano presenti più di una
+                                                 'delete_card_icon_' + str(
+                                                     self.premade_colonna.id))  # seleziono la prima card creata, nel caso siano presenti più di una
         delete_card_icon.click()  # entro in modifica card
         selenium.switch_to.alert.accept()  # accetto l'ok dall'alert javascript
-        total_cards -= 1
 
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_nome')))
@@ -543,11 +613,11 @@ class ViewsTest(LiveServerTestCase):
 
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
-        assert new_column_name in selenium.page_source
-        assert edited_card_name not in selenium.page_source  # card appena cancellata
-        assert edited_card_description not in selenium.page_source  # card appena cancellata
+        assert self.premade_colonna.nome in selenium.page_source
+        assert self.premade_card.nome not in selenium.page_source  # card appena cancellata
+        assert self.premade_card.descrizione not in selenium.page_source  # card appena cancellata
 
-        edited_column_name = new_column_name + " edit"
+        edited_column_name = self.premade_colonna.nome + " edit"
         edit_column_name_field = selenium.find_element(By.ID, 'id_nome')
         submit = selenium.find_element(By.ID, 'submit_edited_column')
 
@@ -565,14 +635,22 @@ class ViewsTest(LiveServerTestCase):
 
         assert "Board Detail" in selenium.title
         assert edited_column_name in selenium.page_source
-        assert edited_card_name not in selenium.page_source  # card cancellata prima
-        assert edited_card_description not in selenium.page_source  # card cancellata prima
+        assert self.premade_card.nome not in selenium.page_source  # card appena cancellata
+        assert self.premade_card.descrizione not in selenium.page_source  # card appena cancellata
 
-        delete_column_icon = selenium.find_element(By.ID, 'delete_column_icon_1')
+        time.sleep(1)
+
+    def test8DeleteColumn(self):
+        selenium = self.selenium
+
+        selenium.get(self.live_server_url + '/')
+
+        self.login(selenium, timeout)
+        self.enter_default_board(selenium, timeout)
+
+        delete_column_icon = selenium.find_element(By.ID, 'delete_column_icon_' + str(self.premade_colonna.id))
         delete_column_icon.click()
         selenium.switch_to.alert.accept()  # accetto l'ok dall'alert javascript
-
-        total_columns -= 1
 
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'board_name')))
@@ -583,38 +661,9 @@ class ViewsTest(LiveServerTestCase):
 
         assert "Board Detail" in selenium.title
         assert 'La board è ancora vuota :(' in selenium.page_source
-        assert edited_column_name not in selenium.page_source
-        assert edited_card_name not in selenium.page_source  # card cancellata prima
-        assert edited_card_description not in selenium.page_source  # card cancellata prima
-
-        time.sleep(1)
-
-    def test3Logout(self):
-        selenium = self.selenium
-
-        selenium.get(self.live_server_url + '/')
-
-        self.login(selenium, timeout)
-
-        try:
-            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'aggiungi_board')))
-        except TimeoutException:
-            print("timeout entrata pagina dashboard")
-
-        assert "BOARD" in selenium.page_source
-        assert "Le mie board" in selenium.title
-
-        logout_button = selenium.find_element(By.ID, 'logout_button')
-        logout_button.click()
-
-        try:
-            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
-        except TimeoutException:
-            print("timeout entrata pagina dashboard")
-
-        assert "Login" in selenium.title
-        assert "login" in selenium.current_url
-        assert "Non hai un account?" in selenium.page_source
+        assert self.premade_colonna.nome not in selenium.page_source
+        assert self.premade_card.nome not in selenium.page_source  # card cancellata insieme alla colonna
+        assert self.premade_card.descrizione not in selenium.page_source  # card cancellata insieme alla colonna
 
         time.sleep(1)
 
@@ -637,6 +686,17 @@ class ViewsTest(LiveServerTestCase):
         username.send_keys('Utente1')
         password.send_keys('Admin1')
         submit.click()
+
+    def enter_default_board(self, selenium, timeout):
+        # aspetto dopo il login
+
+        try:
+            WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'aggiungi_board')))
+        except TimeoutException:
+            print("timeout entrata pagina dashboard")
+
+        board = selenium.find_element(By.ID, "board_" + str(self.premade_board.id))
+        board.click()
 
 
 if __name__ == '__main__':

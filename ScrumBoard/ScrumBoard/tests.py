@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from ScrumBoard.models import *
-from utils import get_chromedriver_path
+from utils import *
 
 
 class ModelTest(TestCase):
@@ -208,6 +208,7 @@ class ModelTest(TestCase):
 
 # timeout per i tentativi
 timeout = 5
+wait = .5
 
 
 class ViewsTest(LiveServerTestCase):
@@ -217,7 +218,7 @@ class ViewsTest(LiveServerTestCase):
         # metterlo in venv nel percorso qua sotto
         # ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
         # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
-        self.selenium = webdriver.Chrome(executable_path=get_chromedriver_path())
+        self.selenium = webdriver.Firefox(executable_path=get_geckodriver_path())
         # inizializza qui tutto il test database
         self.premade_user = User.objects.create_user(username="Utente1", password="Admin1")
         self.new_user = User.objects.create_user(username="Utente_nuovo", password="Admin1") # per aggiunta alla board
@@ -245,6 +246,7 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("Timeout all'apertura del sito e redirect a login")
 
+        time.sleep(wait)
         assert "Login" in selenium.title  # verifico che il redirect da root a login funzioni correttamente
         assert "Username..." in selenium.page_source
         assert "Password..." in selenium.page_source
@@ -265,6 +267,7 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("Page took too long to load!")
 
+        time.sleep(wait)
         assert 'Registrati' in selenium.title
         assert 'scrumboard' in selenium.page_source
 
@@ -285,6 +288,8 @@ class ViewsTest(LiveServerTestCase):
             WebDriverWait(selenium, timeout).until(EC.url_contains('login'))
         except TimeoutException:
             print("Page took too long to load!")
+
+        time.sleep(wait)
         assert "Login" in selenium.title
         assert "successo" in selenium.page_source
 
@@ -295,6 +300,7 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("Page took too long to load!")
 
+        time.sleep(wait)
         assert 'Login' in selenium.title
         assert 'scrumboard' in selenium.page_source
 
@@ -312,7 +318,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina dashboard")
 
         # controlla che siamo in dashboard
-
+        time.sleep(wait)
         assert "BOARD" in selenium.page_source
         assert "Le mie board" in selenium.title
 
@@ -324,11 +330,11 @@ class ViewsTest(LiveServerTestCase):
         except TimeoutException:
             print("timeout entrata pagina dashboard")
 
+        time.sleep(wait)
         assert "Login" in selenium.title
         assert "login" in selenium.current_url
         assert "Non hai un account?" in selenium.page_source
 
-        time.sleep(1)
 
     def test2DashBoardAddBoard(self):
         selenium = self.selenium
@@ -343,7 +349,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina dashboard")
 
         # controlla che siamo in dashboard
-
+        time.sleep(wait)
         assert "BOARD" in selenium.page_source
         assert "Le mie board" in selenium.title
         assert self.premade_board.nome in selenium.page_source  # controllo che la board creata in fase di setup sia visualizzata
@@ -357,7 +363,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina crazione board")
 
         # controlla che siamo dentro aggiunta board
-
+        time.sleep(wait)
         assert 'Aggiunta board' in selenium.title
 
         board_name_input = selenium.find_element(By.ID, 'id_nome')
@@ -373,12 +379,11 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina board")
 
         # controlla che siamo dentro board detail
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title  # vado alla nuova board
         assert 'La board è ancora vuota :(' in selenium.page_source
         assert new_board_name in selenium.page_source
 
-        time.sleep(1)
 
     def test3AddColumn(self):
         selenium = self.selenium
@@ -397,7 +402,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina aggiunta colonna")
 
         # controlla che siamo dentro aggiunta colonna
-
+        time.sleep(wait)
         assert 'Aggiunta colonna' in selenium.title
         assert 'Nome colonna:' in selenium.page_source
 
@@ -406,7 +411,6 @@ class ViewsTest(LiveServerTestCase):
         new_column_name_input = selenium.find_element(By.ID, 'id_nome')
         new_column_name_input.send_keys(new_column_name)
 
-        # time.sleep(1)
         # total_columns += 1
         submit.click()  # invio nuova colonna
 
@@ -416,12 +420,11 @@ class ViewsTest(LiveServerTestCase):
             print("timeout ritorno pagina board dopo aggiunta colonna")
 
         # controlla che siamo tornati dentro board detail con la nuova colonna dentro
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert self.premade_colonna.nome in selenium.page_source # controllo che la colonna creata in fase di setup sia presente
         assert new_column_name in selenium.page_source  # controllo che la nuova colonna sia presente
 
-        time.sleep(1)
 
     def test4AddCard(self):
         selenium = self.selenium
@@ -440,7 +443,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina aggiunta card")
 
         # controlla che siamo entrati nella pagina di aggiunta card
-
+        time.sleep(wait)
         assert "Aggiunta card" in selenium.title
         assert "Nome card:" in selenium.page_source
 
@@ -471,13 +474,11 @@ class ViewsTest(LiveServerTestCase):
             print("timeout ritorno pagina board dopo aggiunta card")
 
         # controlla che siamo in board detail
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert self.premade_card.nome in selenium.page_source  # controllo che la card creata in fase di setup sia presente
         assert new_card_name in selenium.page_source  # controlla che la nuova card sia presente
         assert new_card_description in selenium.page_source
-
-        time.sleep(1)
 
     def test5Burndown(self):
         selenium = self.selenium
@@ -501,6 +502,7 @@ class ViewsTest(LiveServerTestCase):
             selenium.find_element(By.ID, 'cards_total').text)  # prendo le cards visualizzate nella pagina
         back_button = selenium.find_element(By.ID, 'back_button')
 
+        time.sleep(wait)
         assert "Burndown" in selenium.title
         assert "Burndown" in selenium.page_source
         assert "burndown" in selenium.current_url
@@ -518,7 +520,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout ritorno pagina board dopo burndown")
 
         # controlla che siamo tornati dentro board detail dopo burndown
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert self.premade_colonna.nome in selenium.page_source
         assert self.premade_card.nome in selenium.page_source
@@ -539,7 +541,7 @@ class ViewsTest(LiveServerTestCase):
         edit_card_icon.click()  # entro in modifica card
 
         # controlla che siamo entrati in modifica card
-
+        time.sleep(wait)
         assert "Modifica card" in selenium.title
         assert "modifica_card" in selenium.current_url
         assert self.premade_card.nome in selenium.page_source
@@ -564,7 +566,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout tornando in pagina board da modifica card")
 
         # controlla che siamo tornati dentro board detail da modifica card
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert self.premade_colonna.nome in selenium.page_source
         assert edited_card_name in selenium.page_source
@@ -572,7 +574,7 @@ class ViewsTest(LiveServerTestCase):
 
         time.sleep(1)
 
-    def test7DeleteCard(self):
+    def test7DeleteCardEditColumn(self):
         selenium = self.selenium
 
         selenium.get(self.live_server_url + '/')
@@ -591,13 +593,14 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina modifica colonna")
 
         # controlla che siamo nella pagina di modifica colonna
-
+        time.sleep(wait)
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
         assert self.premade_colonna.nome in selenium.page_source
         assert self.premade_card.nome in selenium.page_source
         assert self.premade_card.descrizione in selenium.page_source
 
+        time.sleep(wait)
         delete_card_icon = selenium.find_element(By.ID,
                                                  'delete_card_icon_' + str(
                                                      self.premade_colonna.id))  # seleziono la prima card creata, nel caso siano presenti più di una
@@ -610,7 +613,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout entrata pagina modifica colonna dopo cancellazione card")
 
         # controlla che siamo nella pagina di modifica colonna
-
+        time.sleep(wait)
         assert "Modifica colonna" in selenium.title
         assert "modifica_colonna" in selenium.current_url
         assert self.premade_colonna.nome in selenium.page_source
@@ -632,13 +635,12 @@ class ViewsTest(LiveServerTestCase):
             print("timeout tornando in pagina board da modifica colonna")
 
         # controlla che siamo tornati dentro board detail da modifica colonna
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert edited_column_name in selenium.page_source
         assert self.premade_card.nome not in selenium.page_source  # card appena cancellata
         assert self.premade_card.descrizione not in selenium.page_source  # card appena cancellata
 
-        time.sleep(1)
 
     def test8DeleteColumn(self):
         selenium = self.selenium
@@ -658,14 +660,12 @@ class ViewsTest(LiveServerTestCase):
             print("timeout tornando in pagina board da modifica colonna")
 
         # controlla che siamo tornati dentro board dopo cancellazione colonna
-
+        time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert 'La board è ancora vuota :(' in selenium.page_source
         assert self.premade_colonna.nome not in selenium.page_source
         assert self.premade_card.nome not in selenium.page_source  # card cancellata insieme alla colonna
         assert self.premade_card.descrizione not in selenium.page_source  # card cancellata insieme alla colonna
-
-        time.sleep(1)
 
     # metodo per fare il login senza ripetere il codice ogni volta
     def login(self, selenium, timeout):
@@ -675,7 +675,7 @@ class ViewsTest(LiveServerTestCase):
             WebDriverWait(selenium, timeout).until(EC.element_to_be_clickable((By.ID, 'submit')))
         except TimeoutException:
             print("Page took too long to load!")
-
+        time.sleep(wait)
         assert 'Login' in selenium.title
         assert 'scrumboard' in selenium.page_source
 

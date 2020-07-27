@@ -2,7 +2,8 @@ import datetime
 import time
 import unittest
 
-from django.test import TestCase, Client, LiveServerTestCase
+from django.test import TestCase, Client
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -182,11 +183,11 @@ class ModelTest(TestCase):
 
 
 # test di accettazione
-class ViewsTest(LiveServerTestCase):
+class ViewsTest(StaticLiveServerTestCase):
     def setUp(self):
         # chromedriver scaricabile da qui
         # https://sites.google.com/a/chromium.org/chromedriver/downloads
-        self.selenium = webdriver.Chrome(executable_path=get_chromedriver_path())
+        self.selenium = webdriver.Firefox(executable_path=get_geckodriver_path())
         # inizializza qui tutto il test database
         self.premade_user = User.objects.create_user(username="Utente1", password="Admin1")
         self.new_user = User.objects.create_user(username="Utente_nuovo", password="Admin1")
@@ -617,6 +618,7 @@ class ViewsTest(LiveServerTestCase):
             print("timeout tornando in pagina board da modifica colonna")
 
         # controlla che siamo tornati dentro board dopo cancellazione colonna
+        time.sleep(wait)
         time.sleep(wait)
         assert "Board Detail" in selenium.title
         assert 'La board è ancora vuota :(' in selenium.page_source

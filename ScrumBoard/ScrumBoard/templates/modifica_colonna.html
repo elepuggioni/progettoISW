@@ -2,76 +2,91 @@
 
 {% block title %}Modifica colonna{% endblock %}
 {% block content %}
-{% if column %}
-<div class="container mx-start" style="width: 1200px">
-<div class="row">
+    {% if column %}
+        <div class="container mx-start" style="width: 1200px">
+            <div class="row">
 
-        <!-- Prima colonna sticky quando si scrolla -->
-<div class="col-5">
-    <form method="post" id="modifica_column_form" name="" novalidate class="sticky-top">
-    {% csrf_token %}
-    {% include 'form_base.html' with form=form %}
-    <button type="submit" id="submit_edited_column" name="modifica_nome" class="col-12 btn btn-info">Submit</button>
-    <a href="/cancella_colonna/{{column.id}}" name="cancella_colonna" class="col-12 btn btn-danger" style="margin-top: 10px"
-            onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">Cancella questa colonna</a>
-  </form>
+                <!-- Prima colonna sticky quando si scrolla -->
+                <div class="col-5">
+                    <form method="post" id="modifica_column_form" name="" novalidate class="sticky-top">
+                        {% csrf_token %}
+                        {% include 'form_base.html' with form=form %}
+                        <button type="submit" id="submit_edited_column" name="modifica_nome"
+                                class="col-12 btn btn-info">Submit
+                        </button>
+                        <a href="/cancella_colonna/{{ column.id }}" name="cancella_colonna"
+                           class="col-12 btn btn-danger" style="margin-top: 10px"
+                           onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">Cancella
+                            questa colonna</a>
+                    </form>
 
-</div>
-<div class="col-1" >
-    <!-- colonna vuota -->
-</div>
+                </div>
+                <div class="col-1">
+                    <!-- colonna vuota -->
+                </div>
 
-        <!-- Terza colonna delle cards che scrolla da sola -->
-<div class="col-6">
-         {% for card in column.get_cards %}
-                <div class="modifica-colonna-card col-12 m-0 p-0 d-flex justify-content-center">
-                    <div class="edit-column-card border mx-2 my-1 p-1 m-2">
-                        <div class="text-secondary p-0 m-0">
-                            <div class="container m-0 p-0">
-                                <div class="row m-1 px-2 pt-1">
-                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
-                                        <a href="{{ card.get_absolute_url }}" style="max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
-                                    </div>
-                                    <div class="col-1 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/cancella_card/{{ card.id }}" id="delete_card_icon_{{ card.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa card?');"><img src="/static/media/delete.png" alt="edit" height="16px" width="16px"></a>
-                                    </div>
-                                    <div class="col-1 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/modifica_card/{{ card.id }}" id="edit_card_icon_{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a>
-                                    </div>
-                                </div>
-                            </div>
-                                <div class="card-details px-2 pb-1">
-                                    {% if card.descrizione %}
-                                        <div class="card-description text-wrap my-1">
-                                            <div class="mb-2">
-                                                <hr>
+                <!-- Terza colonna delle cards che scrolla da sola -->
+                <div class="col-6">
+                    {% for card in column.get_cards %}
+                        <div class="modifica-colonna-card col-12 m-0 p-0 d-flex justify-content-center">
+                            <div class="edit-column-card border mx-2 my-1 p-1 m-2">
+                                <div class="text-secondary p-0 m-0">
+                                    <div class="container m-0 p-0">
+                                        <div class="row m-1 px-2 pt-1">
+                                            <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
+                                                <a href="{{ card.get_absolute_url }}"
+                                                   style="max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
                                             </div>
-                                            {{ card.descrizione }}</div>
-                                    {% endif %}
-                                    <div class="my-2">
-                                        <hr>
+                                            <div class="col-1 edit d-flex justify-content-end p-0 m-0">
+                                                <a href="/cancella_card/{{ card.id }}"
+                                                   id="delete_card_icon_{{ card.id }}"
+                                                   class="card-link card-edit card-img"
+                                                   onclick="return confirm('Sicuro di voler eliminare questa card?');"><img
+                                                        src="/static/media/delete.png" alt="edit" height="16px"
+                                                        width="16px"></a>
+                                            </div>
+                                            <div class="col-1 edit d-flex justify-content-end p-0 m-0">
+                                                <a href="/modifica_card/{{ card.id }}" id="edit_card_icon_{{ card.id }}"
+                                                   class="card-link card-edit card-img"><img
+                                                        src="/static/media/edit.png" alt="edit" height="16px"
+                                                        width="16px"></a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div><b>Story points: </b>{{ card.story_points }}</div>
-                                    <div><b>Added: </b>{{ card.data_creazione }}</div>
-                                    <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
-                                    <div class="my-2">
-                                        <hr>
+                                    <div class="card-details px-2 pb-1">
+                                        {% if card.descrizione %}
+                                            <div class="card-description text-wrap my-1">
+                                                <div class="mb-2">
+                                                    <hr>
+                                                </div>
+                                                {{ card.descrizione }}</div>
+                                        {% endif %}
+                                        <div class="my-2">
+                                            <hr>
+                                        </div>
+                                        <div><b>Story points: </b>{{ card.story_points }}</div>
+                                        <div><b>Added: </b>{{ card.data_creazione }}</div>
+                                        <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
+                                        <div class="my-2">
+                                            <hr>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="col-12 pb-2 pt-0 px-0 mx-1 d-flex justify-content-start">
+                                    {% if card.get_users %}
+                                        {% for user in card.get_users %}
+                                            <a href="#" title="{{ user.username }}"
+                                               class="col-1 m-0 p-0 user-initials d-flex justify-content-center"
+                                               style="text-transform: uppercase;">{{ user.username|first }}</a>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <br>
+                                </div>
                             </div>
-                        <div class="col-12 pb-2 pt-0 px-0 mx-1 d-flex justify-content-start">
-                        {% if card.get_users %}
-                            {% for user in card.get_users %}
-                                <a href="#" title="{{ user.username }}" class="col-1 m-0 p-0 user-initials d-flex justify-content-center" style="text-transform: uppercase;">{{ user.username|first }}</a>
-                            {% endfor %}
-                        {% endif %}
-                        <br>
                         </div>
-                            </div>
-                        </div>
-        {% endfor %}
-</div>
-</div>
-</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

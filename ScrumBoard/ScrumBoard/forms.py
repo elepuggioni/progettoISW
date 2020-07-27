@@ -1,14 +1,15 @@
-from django import forms
 from bootstrap_datepicker_plus import DatePickerInput
-from django.db.models.query import QuerySet
-from django.db import models
+from django import forms
+
 from ScrumBoard.models import *
+
 
 class ScrumForm(forms.Form):
 
     def salva(self):
         """Salva i dati contenuti nel form all'interno del database"""
         pass
+
 
 class BoardForm(ScrumForm):
     """Creazione del form per le board. Funziona solo per la creazione"""
@@ -23,11 +24,6 @@ class BoardForm(ScrumForm):
         max_length=24,
         min_length=3
     )
-    # il proprietario dovrebbe essere colui che crea la board
-    """proprietario = forms.ModelChoiceField(
-        queryset=queryset,
-        to_field_name='username'
-    )"""
 
     membri = forms.ModelMultipleChoiceField(
         queryset=None,
@@ -140,11 +136,11 @@ class CardForm(ScrumForm):
                                     )
     story_points = forms.IntegerField(
         label="Story points",
-        max_value=20,  # si può togliere, ho dato un valore per ricordarci che esiste la possibilità
+        max_value=20,
         required=False,
         initial=0
     )
-    #va messo qualcosa per il quale se non ci sono ancora colonne ti porta a crea colonna
+
     colonna = forms.ModelChoiceField(
         queryset=None,
         to_field_name='nome',

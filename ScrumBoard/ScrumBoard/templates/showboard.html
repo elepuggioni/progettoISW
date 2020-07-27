@@ -3,89 +3,99 @@
 {% block title %}Board Detail{% endblock %}
 
 {% block content %}
-      {% if board %}
-    <div class="container m-0 p-0">
-        <div class="row m-0 p-0">
-            <h3 class="col-md-4" id="board_name">{{ board.nome }}</h3>
-            <div class="col-md-8 d-flex justify-content-end">
-            <a href="/board/{{ board_id }}/aggiungi_utente" class="col btn btn-outline-info board-button align-self-center" id="add_user">Aggiungi Utente</a>
-            <a href="/board/{{ board_id }}/aggiungi_colonna" class="col btn btn-outline-info board-button align-self-center" id="add_column" >Aggiungi Colonna</a>
-            <a href="/board/{{ board_id }}/aggiungi_card" class="col btn btn-outline-info board-button align-self-center" id="add_card">Aggiungi Card</a>
-                <a href="../../burndown/{{ board_id }}" class="col btn btn-outline-info board-button align-self-center" id="burndown">Burndown</a>
+    {% if board %}
+        <div class="container m-0 p-0">
+            <div class="row m-0 p-0">
+                <h3 class="col-md-4" id="board_name">{{ board.nome }}</h3>
+                <div class="col-md-8 d-flex justify-content-end">
+                    <a href="/board/{{ board_id }}/aggiungi_utente"
+                       class="col btn btn-outline-info board-button align-self-center" id="add_user">Aggiungi Utente</a>
+                    <a href="/board/{{ board_id }}/aggiungi_colonna"
+                       class="col btn btn-outline-info board-button align-self-center" id="add_column">Aggiungi
+                        Colonna</a>
+                    <a href="/board/{{ board_id }}/aggiungi_card"
+                       class="col btn btn-outline-info board-button align-self-center" id="add_card">Aggiungi Card</a>
+                    <a href="../../burndown/{{ board_id }}"
+                       class="col btn btn-outline-info board-button align-self-center" id="burndown">Burndown</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <hr>
-    <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1 h-100">
-        {% if board.get_colonne %}
-        {% for colonna in board.get_colonne %}
+        <hr>
+        <div class="container-fluid board-box scrollbar-info d-flex flex-row rounded d-flex justify-content-start m-1 p-1 h-100">
+            {% if board.get_colonne %}
+                {% for colonna in board.get_colonne %}
 
-        <div class="col board-column scrollbar-info border rounded border-success px-0 mx-1 d-flex align-items-start d-flex justify-content-center">
-            <div class="row justify-content-end w-100">
-                <div class="col-8 col_title p-0 m-0 d-flex justify-content-center">
-                    <a href="{{ colonna.get_absolute_url }}" id="column_name_link_{{ colonna.id }}" class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
-                </div>
-                <div class="col-2 p-0 m-0 justify-content-end">
-                    <a href="/cancella_colonna/{{ colonna.id }}" id="delete_column_icon_{{ colonna.id }}" class="card-link card-edit card-img" onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
-                        <img src="/static/media/delete.png" alt="edit" height="15px" width="16px">
-                    </a>
-                </div>
-                <div class="w-100"></div>
-                {% for card in colonna.get_cards %}
-                <div class="col-12 m-0 p-0 d-flex justify-content-center">
-                    <div class="card border-secondary mx-0 my-1 p-0">
-                        <div class="card-body text-secondary p-0 m-0">
-                            <div class="container m-0 p-0">
-                                <div class="row m-0 px-2 pt-1 pb-0">
-                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
-                                        <a href="{{ card.get_absolute_url }}" style="max-width:95%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
+                    <div class="col board-column scrollbar-info border rounded border-success px-0 mx-1 d-flex align-items-start d-flex justify-content-center">
+                        <div class="row justify-content-end w-100">
+                            <div class="col-8 col_title p-0 m-0 d-flex justify-content-center">
+                                <a href="{{ colonna.get_absolute_url }}" id="column_name_link_{{ colonna.id }}"
+                                   class="text-uppercase stretched-link text-decoration-none col-title">{{ colonna.nome }}</a>
+                            </div>
+                            <div class="col-2 p-0 m-0 justify-content-end">
+                                <a href="/cancella_colonna/{{ colonna.id }}" id="delete_column_icon_{{ colonna.id }}"
+                                   class="card-link card-edit card-img"
+                                   onclick="return confirm('Sicuro di voler eliminare questa colonna e tutte le cards associate?')">
+                                    <img src="/static/media/delete.png" alt="edit" height="15px" width="16px">
+                                </a>
+                            </div>
+                            <div class="w-100"></div>
+                            {% for card in colonna.get_cards %}
+                                <div class="col-12 m-0 p-0 d-flex justify-content-center">
+                                    <div class="card border-secondary mx-0 my-1 p-0">
+                                        <div class="card-body text-secondary p-0 m-0">
+                                            <div class="container m-0 p-0">
+                                                <div class="row m-0 px-2 pt-1 pb-0">
+                                                    <div class="col-10 card-title p-0 m-0 d-flex justify-content-start">
+                                                        <a href="{{ card.get_absolute_url }}"
+                                                           style="max-width:95%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ card.nome }}</a>
+                                                    </div>
+                                                    <div class="col-2 edit d-flex justify-content-end p-0 m-0">
+                                                        <a href="/modifica_card/{{ card.id }}"
+                                                           id="edit_card_icon_{{ card.id }}"
+                                                           class="card-link card-edit card-img"><img
+                                                                src="/static/media/edit.png" alt="edit" height="16px"
+                                                                width="16px"></a></div>
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                            <div class="card-hidden mx-1 my-0">
+                                                <hr>
+                                                {% if card.descrizione %}
+                                                    <div class="card-description m-0">{{ card.descrizione }}
+                                                        <hr>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="card-details m-0">
+                                                    <div><b>Story points: </b>{{ card.story_points }}</div>
+                                                    <div><b>Added: </b>{{ card.data_creazione }}</div>
+                                                    <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="mx-1">
+                                                <hr>
+                                            </div>
+                                            <div class="container mb-2 mr-1 ml-1 p-0 ">
+                                                <div class="row m-0 p-0 justify-content-start">
+                                                    {% for user in card.get_users %}
+                                                        <a href=" " title="{{ user.username }}"
+                                                           class="col-2 m-0 p-0 user-initials"
+                                                           style="text-transform: uppercase;">{{ user.username|first }}</a>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-2 edit d-flex justify-content-end p-0 m-0">
-                                        <a href="/modifica_card/{{ card.id }}" id="edit_card_icon_{{ card.id }}" class="card-link card-edit card-img"><img src="/static/media/edit.png" alt="edit" height="16px" width="16px"></a></div>
-                                    <hr>
                                 </div>
-                            </div>
-                            <div class="card-hidden mx-1 my-0">
-                                <hr>
-                                {% if card.descrizione %}
-                                <div class="card-description m-0">{{ card.descrizione }}<hr></div>
-                                {% endif %}
-                                <div class="card-details m-0">
-                                    <div><b>Story points: </b>{{ card.story_points }}</div>
-                                    <div><b>Added: </b>{{ card.data_creazione }}</div>
-                                    <div><b>Expiration: </b>{{ card.data_scadenza }}</div>
-                                </div>
-                            </div>
-                            <div class="mx-1">
-                                <hr>
-                            </div>
-                            <div class="container mb-2 mr-1 ml-1 p-0 ">
-                                <div class="row m-0 p-0 justify-content-start">
-                                    {% for user in card.get_users %}
-                                        <a href=" " title="{{ user.username }}" class="col-2 m-0 p-0 user-initials" style="text-transform: uppercase;">{{ user.username|first }}</a>
-                                    {% endfor %}
-                                </div>
-                            </div>
+                                <div class="w-100"></div>
+                            {% endfor %}
                         </div>
                     </div>
-                </div>
-                <div class="w-100"></div>
-
-                <div id="open_card" class="overlay" data-card="card">
-                  <div class="overlay-content">
-
-                    </div>
-                </div>
-
                 {% endfor %}
-            </div>
+            {% else %}
+                <h5 class="d-flex justify-content-center align-content-center w-100 my-auto" id="empty_board">La board è
+                    ancora vuota :(</h5>
+            {% endif %}
         </div>
-        {% endfor %}
-
-        {% else %}
-        <h5 class="d-flex justify-content-center align-content-center w-100 my-auto" id="empty_board">La board è ancora vuota :(</h5>
-        {% endif %}
-    </div>
     {% endif %}
 {% endblock %}

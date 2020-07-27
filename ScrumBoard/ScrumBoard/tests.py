@@ -1,9 +1,7 @@
 import datetime
-import os
 import time
 import unittest
 
-from django.contrib.auth.models import User
 from django.test import TestCase, Client, LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -13,6 +11,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from ScrumBoard.models import *
 from utils import *
+
+# timeout per i tentativi
+timeout = 5
+wait = .5
 
 
 class ModelTest(TestCase):
@@ -84,7 +86,6 @@ class ModelTest(TestCase):
         self.assertEqual(len(Board.objects.all()), len(self.boards))
         for board in self.boards:
             self.assertIn(board, Board.objects.all())
-        # self.assertEqual(Board.objects.get(proprietario=self.utente).proprietario, self.utente)
 
     def testFindColonne(self):
         # test sulle colonne
@@ -98,17 +99,10 @@ class ModelTest(TestCase):
         for card in self.cards:
             self.assertIn(card, Card.objects.all())
 
-        # si può pensare di usare questo test per eliminare tutti i successivi
         self.assertEqual(self.cards, list(Card.objects.all()))
 
         self.assertEqual(Card.objects.get(nome='Prova'), self.cards[0])
         self.assertEqual(Card.objects.get(nome='Prova2'), self.cards[1])
-        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova")), 3)
-        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova2")), 1)
-        # self.assertEqual(len(Card.objects.all().filter(nome__contains="Prova3")), 1)
-        # self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova")), 3)
-        # self.assertEqual(len(Card.objects.all().filter(descrizione__contains="Carta di prova2")), 1)
-        # self.assertEqual(len(Card.objects.all().filter(story_points="5")), 2)
         self.assertIn(self.cards[0], self.colonne[0].card_set.all())
         self.assertIn(self.cards[1], self.colonne[1].card_set.all())
 
@@ -162,9 +156,9 @@ class ModelTest(TestCase):
     def contaScadute(self, board):
         count = 0
         for card in self.cards:
-            if (card.colonna.board == board and card.is_scaduta()):
+            if card.colonna.board == board and card.is_scaduta():
                 count += 1
-        return count;
+        return count
 
     def testContaStorypointsUsati(self):
         self.assertEqual(self.boards[0].conta_storypoints_usati(), self.contaStorypointsUsati(self.boards[0]))
@@ -172,7 +166,7 @@ class ModelTest(TestCase):
     def contaStorypoints(self, colonna):
         totale = 0
         for card in self.cards:
-            if (card.colonna == colonna):
+            if card.colonna == colonna:
                 totale += card.story_points
         return totale
 
@@ -180,48 +174,22 @@ class ModelTest(TestCase):
         return self.contaStorypoints(board.get_ultima_colonna())
 
     def testDashboardView(self):
-        # self.assertTrue(self.client.login(username=self.utenti[0].username, password='admin'))
         self.client.force_login(self.utenti[0])
         response = self.client.get('/dashboard/')
         for board in self.boards:
-            if (board.partecipanti == self.utenti[0]):
+            if board.partecipanti == self.utenti[0]:
                 self.assertContains(response, board.nome)
 
 
-"""
-    def testShowBoard(self):
-        # self.assertTrue(self.client.login(username='Utente1', password='admin'))
-
-        response = self.client.get(self.boards[0].get_absolute_url())
-        for colonna in Colonna.objects.filter(board=self.boards[0]):
-            self.assertContains(response, colonna.nome)
-            for card in Card.objects.filter(colonna=colonna):
-                self.assertContains(response, card.nome)
-
-    def testCreaBoardViewGet(self):
-        response = self.client.get('/dashboard/crea_board')
-        self.assertIsInstance(response.context['fo  rm'], BoardForm)
-
-    def testCreaBoardPost(self):
-        response = self.client.post('/dashboard/crea_board', {'nome':'testpipo'})
-        print(response.context['nome'])"""
-
-# timeout per i tentativi
-timeout = 5
-wait = .5
-
-
+# test di accettazione
 class ViewsTest(LiveServerTestCase):
     def setUp(self):
-        # dovete scaricare il driver del browser corrispondente (chrome in questo caso)
-        # da https://sites.google.com/a/chromium.org/chromedriver/downloads
-        # metterlo in venv nel percorso qua sotto
-        # ho cercato di fare in modo che il percorso che ho messo valesse per tutti,
-        # ma potrebbe non funzionare a seconda della struttura del vostro progetto...
-        self.selenium = webdriver.Firefox(executable_path=get_geckodriver_path())
+        # chromedriver scaricabile da qui
+        # https://sites.google.com/a/chromium.org/chromedriver/downloads
+        self.selenium = webdriver.Chrome(executable_path=get_chromedriver_path())
         # inizializza qui tutto il test database
         self.premade_user = User.objects.create_user(username="Utente1", password="Admin1")
-        self.new_user = User.objects.create_user(username="Utente_nuovo", password="Admin1") # per aggiunta alla board
+        self.new_user = User.objects.create_user(username="Utente_nuovo", password="Admin1")
         self.premade_board = Board.objects.create(nome='Board1', proprietario=self.premade_user)
         self.premade_colonna = Colonna.objects.create(nome='Colonna1', board=self.premade_board)
         self.premade_card = Card.objects.create(nome="Prova",
@@ -254,11 +222,9 @@ class ViewsTest(LiveServerTestCase):
         # apre la pagina register
         signup_link = selenium.find_element(By.ID, 'signup')
         signup_link.click()
-        # selenium.get(self.live_server_url + '/register')   # ho sostituito con la pagina di login e click a register per implementare un test aggiuntivo all'inizio
 
         # aspetta che gli elementi vengano caricati prima di cercarli, se ci mette più
         # di 5 secondi lancia un'eccezione
-
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'username')))
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'password1')))
@@ -335,7 +301,6 @@ class ViewsTest(LiveServerTestCase):
         assert "login" in selenium.current_url
         assert "Non hai un account?" in selenium.page_source
 
-
     def test2DashBoardAddBoard(self):
         selenium = self.selenium
 
@@ -367,7 +332,7 @@ class ViewsTest(LiveServerTestCase):
         assert 'Aggiunta board' in selenium.title
 
         board_name_input = selenium.find_element(By.ID, 'id_nome')
-        submit = selenium.find_element(By.ID, 'submit_new_board')  # stesso di sopra
+        submit = selenium.find_element(By.ID, 'submit_new_board')
 
         new_board_name = "Board 2"
         board_name_input.send_keys(new_board_name)
@@ -383,7 +348,6 @@ class ViewsTest(LiveServerTestCase):
         assert "Board Detail" in selenium.title  # vado alla nuova board
         assert 'La board è ancora vuota :(' in selenium.page_source
         assert new_board_name in selenium.page_source
-
 
     def test3AddColumn(self):
         selenium = self.selenium
@@ -411,7 +375,6 @@ class ViewsTest(LiveServerTestCase):
         new_column_name_input = selenium.find_element(By.ID, 'id_nome')
         new_column_name_input.send_keys(new_column_name)
 
-        # total_columns += 1
         submit.click()  # invio nuova colonna
 
         try:
@@ -422,9 +385,8 @@ class ViewsTest(LiveServerTestCase):
         # controlla che siamo tornati dentro board detail con la nuova colonna dentro
         time.sleep(wait)
         assert "Board Detail" in selenium.title
-        assert self.premade_colonna.nome in selenium.page_source # controllo che la colonna creata in fase di setup sia presente
+        assert self.premade_colonna.nome in selenium.page_source  # controllo che la colonna creata in fase di setup sia presente
         assert new_column_name in selenium.page_source  # controllo che la nuova colonna sia presente
-
 
     def test4AddCard(self):
         selenium = self.selenium
@@ -525,8 +487,6 @@ class ViewsTest(LiveServerTestCase):
         assert self.premade_colonna.nome in selenium.page_source
         assert self.premade_card.nome in selenium.page_source
 
-        time.sleep(1)
-
     def test6EditCard(self):
         selenium = self.selenium
 
@@ -537,7 +497,7 @@ class ViewsTest(LiveServerTestCase):
 
         edit_card_icon = selenium.find_element(By.ID,
                                                'edit_card_icon_' + str(
-                                                   self.premade_card.id))  # seleziono la prima card creata, nel caso siano presenti più di una
+                                                   self.premade_card.id))
         edit_card_icon.click()  # entro in modifica card
 
         # controlla che siamo entrati in modifica card
@@ -572,8 +532,6 @@ class ViewsTest(LiveServerTestCase):
         assert edited_card_name in selenium.page_source
         assert edited_card_description in selenium.page_source
 
-        time.sleep(1)
-
     def test7DeleteCardEditColumn(self):
         selenium = self.selenium
 
@@ -584,7 +542,7 @@ class ViewsTest(LiveServerTestCase):
 
         column_name_link = selenium.find_element(By.ID,
                                                  'column_name_link_' + str(
-                                                     self.premade_colonna.id))  # seleziono la prima colonna creata, nel caso siano presenti più di una
+                                                     self.premade_colonna.id))
         column_name_link.click()
 
         try:
@@ -603,7 +561,7 @@ class ViewsTest(LiveServerTestCase):
         time.sleep(wait)
         delete_card_icon = selenium.find_element(By.ID,
                                                  'delete_card_icon_' + str(
-                                                     self.premade_colonna.id))  # seleziono la prima card creata, nel caso siano presenti più di una
+                                                     self.premade_colonna.id))
         delete_card_icon.click()  # entro in modifica card
         selenium.switch_to.alert.accept()  # accetto l'ok dall'alert javascript
 
@@ -640,7 +598,6 @@ class ViewsTest(LiveServerTestCase):
         assert edited_column_name in selenium.page_source
         assert self.premade_card.nome not in selenium.page_source  # card appena cancellata
         assert self.premade_card.descrizione not in selenium.page_source  # card appena cancellata
-
 
     def test8DeleteColumn(self):
         selenium = self.selenium

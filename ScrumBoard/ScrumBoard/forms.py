@@ -117,7 +117,7 @@ class CardForm(ScrumForm):
 
         super().__init__(data)
         self.fields['colonna'].queryset = Colonna.objects.filter(board=board)
-        self.fields['membri'].queryset = User.objects.all()
+        self.fields['membri'].queryset = Board.objects.get(id=board.id).partecipanti.all()
 
     nome = forms.CharField(
         label="Nome card",

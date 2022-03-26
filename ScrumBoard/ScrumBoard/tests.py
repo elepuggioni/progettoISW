@@ -318,7 +318,7 @@ class ViewsTest(StaticLiveServerTestCase):
         time.sleep(wait)
         assert "BOARD" in selenium.page_source
         assert "Le mie board" in selenium.title
-        assert self.premade_board.nome in selenium.page_source  # controllo che la board creata in fase di setup sia visualizzata
+        assert self.premade_board.nome in selenium.page_source
 
         add_board = selenium.find_element(By.ID, 'aggiungi_board')
         add_board.click()
@@ -326,7 +326,7 @@ class ViewsTest(StaticLiveServerTestCase):
         try:
             WebDriverWait(selenium, timeout).until(EC.presence_of_element_located((By.ID, 'id_nome')))
         except TimeoutException:
-            print("timeout entrata pagina crazione board")
+            print("timeout entrata pagina creazione board")
 
         # controlla che siamo dentro aggiunta board
         time.sleep(wait)

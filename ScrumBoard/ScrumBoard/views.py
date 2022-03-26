@@ -71,7 +71,7 @@ def aggiungi_card(request, board_id):
             redirect_to = Board.objects.get(pk=board_id)
             return redirect(redirect_to)
     else:
-        card_form = CardForm(board=board_id)
+        card_form = CardForm(board=board)
     return render(request, "aggiungi_card.html", {"board": board, "form": card_form})
 
 
